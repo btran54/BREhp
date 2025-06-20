@@ -33,7 +33,7 @@
             display: flex;
             align-items: center;
             justify-content: space-between;
-            padding: 1rem 2rem;
+            padding: 1.5rem 2rem;
             background: rgba(0, 0, 0, 0.1);
             backdrop-filter: blur(10px);
             position: relative;
@@ -43,17 +43,17 @@
         .nav-section {
             display: flex;
             align-items: center;
-            gap: 1rem;
+            gap: 1.5rem;
         }
 
         .hamburger-btn {
             background: none;
             border: none;
             color: white;
-            font-size: 1.5rem;
+            font-size: 2rem;
             cursor: pointer;
-            padding: 0.5rem;
-            border-radius: 4px;
+            padding: 0.75rem;
+            border-radius: 6px;
             transition: background-color 0.2s;
         }
 
@@ -65,8 +65,9 @@
             color: white;
             text-decoration: none;
             font-weight: 500;
-            padding: 0.5rem 1rem;
-            border-radius: 4px;
+            font-size: 1.1rem;
+            padding: 0.75rem 1.5rem;
+            border-radius: 6px;
             transition: background-color 0.2s;
         }
 
@@ -81,7 +82,7 @@
         }
 
         .azur-lane-logo {
-            width: 120px;
+            width: 160px;
             height: auto;
             filter: brightness(1.2);
         }
@@ -127,7 +128,7 @@
         }
 
         .blue-road-logo {
-            width: 800px;
+            width: 600px;
             height: auto;
             filter: brightness(1.1) drop-shadow(0 8px 16px rgba(0, 0, 0, 0.2));
             transition: transform 0.3s ease;
@@ -198,7 +199,7 @@
 
         .ship-row {
             display: flex;
-            align-items: flex-end;
+            align-items: center;
             gap: 1rem;
             padding: 0.75rem 1rem;
             background: rgba(255, 255, 255, 0.03);
@@ -209,21 +210,24 @@
         .ship-controls {
             flex: 3;
             display: flex;
-            flex-direction: column;
-            gap: 0.75rem;
+            flex-direction: row;
+            align-items: center;
+            gap: 1rem;
         }
 
         .ship-name {
             font-weight: 600;
             color: #f1f5f9;
             font-size: 1.1rem;
-            margin-bottom: 0.25rem;
+            min-width: 100px;
+            flex-shrink: 0;
         }
 
         .dropdown-group {
             display: flex;
             gap: 0.5rem;
             flex-wrap: nowrap;
+            flex: 1;
         }
 
         .dropdown {
@@ -254,7 +258,7 @@
         .ehp-result {
             flex: 7;
             display: flex;
-            align-items: flex-end;
+            align-items: center;
             width: 100%;
         }
 
@@ -377,7 +381,7 @@
         /* Responsive design */
         @media (max-width: 1024px) {
             .blue-road-logo {
-                width: 600px;
+                width: 300px;
             }
             
             .welcome-title {
@@ -403,7 +407,7 @@
             }
             
             .blue-road-logo {
-                width: 500px;
+                width: 250px;
             }
             
             .action-buttons {
@@ -425,16 +429,20 @@
 
             .ship-controls {
                 flex: none;
+                flex-direction: column;
+                align-items: center;
+                gap: 0.5rem;
             }
 
             .ship-name {
                 text-align: center;
-                margin-bottom: 0.5rem;
+                min-width: auto;
             }
 
             .dropdown-group {
                 flex-direction: column;
                 gap: 0.5rem;
+                width: 100%;
             }
 
             .dropdown {
@@ -468,7 +476,7 @@
             }
             
             .blue-road-logo {
-                width: 400px;
+                width: 200px;
             }
             
             .btn {
@@ -609,7 +617,7 @@
                 <a href="../../index.html" class="home-link">Home</a>
             </div>
             <div class="azur-lane-section">
-                <!-- Azur Lane Logo PNG -->
+                <!-- Azur Lane Logo -->
                  <img src="../../images/Azur_Lane_English_Release_Logo.png" alt="Azur Lane" class="azur-lane-logo">
             </div>
         </header>
@@ -623,7 +631,7 @@
             </section>
 
             <section class="blue-road-section">
-                <!-- Blue Road Logo PNG -->
+                <!-- Blue Road Logo -->
                  <img src="../../images/Blue_Road_Logo.png" alt="Blue Road" class="blue-road-logo">
 
             </section>

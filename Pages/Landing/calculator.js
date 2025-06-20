@@ -1,10 +1,3 @@
-// eHP Calculator for Blue Road Landing Page
-// ==========================================
-// Dropdown Structure:
-// 1. Auxiliary Slot 1 (Repair Toolkit, 550 HP Aux, etc.)
-// 2. Auxiliary Slot 2 (Repair Toolkit, 550 HP Aux, etc.)
-// 3. Augments Slot (Dual Swords, Hammer, etc.)
-
 // Global variables for data storage
 let shipsData = [];
 let auxiliaryData = [];
@@ -78,7 +71,7 @@ function updateEHP(shipIndex) {
 
     // Calculate total stats (ship base + equipment bonuses)
     const totalHP = ship.HP + auxiliary1.HP + auxiliary2.HP + augment.HP;
-    const totalHEAL = (auxiliary1.HEAL || 0) + (auxiliary2.HEAL || 0); // Multiple Repair Toolkits can stack healing
+    const totalHEAL = (auxiliary1.HEAL || 0) + (auxiliary2.HEAL || 0); // Multiple Repair Toolkits canNOT stack healing
     const totalEVA = ship.EVA + auxiliary1.EVA + auxiliary2.EVA + augment.EVA;
     const totalLCK = ship.LCK + auxiliary1.LCK + auxiliary2.LCK + augment.LCK;
 
@@ -111,22 +104,22 @@ function updateBarDisplay(shipIndex, ehp) {
 
     // Update bar color based on performance tiers
     if (ehp > 12000) {
-        // Exceptional performance (above 100%) - Bright green gradient
+        // < 100% - Bright green
         barElement.style.background = 'linear-gradient(90deg, #10b981, #34d399)';
     } else if (ehp > 10000) {
-        // High performance (83-100%) - Green gradient
+        // 83-100% - Green
         barElement.style.background = 'linear-gradient(90deg, #059669, #10b981)';
     } else if (ehp > 8000) {
-        // Good performance (67-83%) - Blue gradient
+        // 67-83% - Blue
         barElement.style.background = 'linear-gradient(90deg, #3b82f6, #60a5fa)';
     } else if (ehp > 6000) {
-        // Average performance (50-67%) - Light blue gradient
+        // 50-67% - Light blue
         barElement.style.background = 'linear-gradient(90deg, #0ea5e9, #3b82f6)';
     } else if (ehp > 4000) {
-        // Below average performance (33-50%) - Orange gradient
+        // 33-50% - Orange
         barElement.style.background = 'linear-gradient(90deg, #f59e0b, #fbbf24)';
     } else {
-        // Low performance (0-33%) - Red gradient
+        // 0-33% - Red
         barElement.style.background = 'linear-gradient(90deg, #ef4444, #f87171)';
     }
 }
