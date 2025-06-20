@@ -1,9 +1,8 @@
-// Global variables for data storage
 let shipsData = [];
 let auxiliaryData = [];
 let augmentsData = [];
 
-// Sample data (replace with actual JSON loading)
+// Sample data
 const sampleData = {
     ships: [
         { "Name": "Mutsuki", "HP": 1688, "EVA": 250, "LCK": 35, "LVL": 125 },
@@ -23,12 +22,12 @@ const sampleData = {
 
 /**
  * Calculate effective HP using the Blue Road formula
- * @param {number} hp - Total Hit Points
- * @param {number} heal - Healing multiplier (0-1)
- * @param {number} eva - Evasion stat
- * @param {number} lck - Luck stat
- * @param {number} lvl - Ship level
- * @returns {number} Calculated eHP value
+ * @param {number} hp
+ * @param {number} heal
+ * @param {number} eva
+ * @param {number} lck
+ * @param {number} lvl
+ * @returns {number}
  */
 function calculateEHP(hp, heal, eva, lck, lvl) {
     const numerator = hp * (1 + heal);
@@ -37,11 +36,11 @@ function calculateEHP(hp, heal, eva, lck, lvl) {
 }
 
 /**
- * Create dropdown HTML for equipment selection
- * @param {Array} items - Array of equipment items
- * @param {string} id - HTML element ID
- * @param {number} defaultIndex - Default selected index
- * @returns {string} HTML string for dropdown
+ * Dropdown for equipment selection
+ * @param {Array} items - Items
+ * @param {string} id - Item ID
+ * @param {number} defaultIndex
+ * @returns {string}
  */
 function createDropdown(items, id, defaultIndex = 0) {
     let options = '';
@@ -59,50 +58,46 @@ function createDropdown(items, id, defaultIndex = 0) {
 function updateEHP(shipIndex) {
     const ship = sampleData.ships[shipIndex];
     
-    // Get selected equipment indices
+    // Equipment indices
     const aux1Index = parseInt(document.getElementById(`aux1-${shipIndex}`).value);
     const aux2Index = parseInt(document.getElementById(`aux2-${shipIndex}`).value);
     const augIndex = parseInt(document.getElementById(`aug-${shipIndex}`).value);
 
-    // Get equipment data
+    // Equipment data
     const auxiliary1 = sampleData.auxiliary[aux1Index];
     const auxiliary2 = sampleData.auxiliary[aux2Index];
     const augment = sampleData.augments[augIndex];
 
-    // Calculate total stats (ship base + equipment bonuses)
+    // Calculate total stats (FIX THIS)
     const totalHP = ship.HP + auxiliary1.HP + auxiliary2.HP + augment.HP;
     const totalHEAL = (auxiliary1.HEAL || 0) + (auxiliary2.HEAL || 0); // Multiple Repair Toolkits canNOT stack healing
     const totalEVA = ship.EVA + auxiliary1.EVA + auxiliary2.EVA + augment.EVA;
     const totalLCK = ship.LCK + auxiliary1.LCK + auxiliary2.LCK + augment.LCK;
 
-    // Calculate eHP using the formula
+    // Calculate eHP
     const ehp = calculateEHP(totalHP, totalHEAL, totalEVA, totalLCK, ship.LVL);
 
-    // Update visual display
     updateBarDisplay(shipIndex, ehp);
 }
 
 /**
  * Update the visual bar chart display
- * @param {number} shipIndex - Index of the ship
- * @param {number} ehp - Calculated eHP value
+ * @param {number} shipIndex
+ * @param {number} ehp
  */
 function updateBarDisplay(shipIndex, ehp) {
     const barElement = document.getElementById(`bar-${shipIndex}`);
     const textElement = document.getElementById(`text-${shipIndex}`);
     
-    // Calculate percentage out of 12000 (100% = 12000)
     const percentage = Math.min((ehp / 12000) * 100, 100);
     
-    // Display as percentage with one decimal place
     textElement.textContent = `${percentage.toFixed(1)}%`;
     
-    // Calculate bar width based on 16000 max scale (to allow for values above 12000)
     const maxEHP = 16000;
     const barWidth = Math.min((ehp / maxEHP) * 100, 100);
     barElement.style.width = `${barWidth}%`;
 
-    // Update bar color based on performance tiers
+    // Bar color based on performance tiers
     if (ehp > 12000) {
         // < 100% - Bright green
         barElement.style.background = 'linear-gradient(90deg, #10b981, #34d399)';
@@ -125,7 +120,7 @@ function updateBarDisplay(shipIndex, ehp) {
 }
 
 /**
- * Create HTML for a single ship calculator row
+ * HTML for a single ship calculator row
  * @param {Object} ship - Ship data object
  * @param {number} index - Ship index
  * @returns {string} HTML string for the ship row
@@ -152,30 +147,23 @@ function createShipRow(ship, index) {
     `;
 }
 
-/**
- * Initialize the calculator interface and event listeners
- */
 function initializeCalculator() {
     const container = document.getElementById('ship-calculators');
     const loading = document.getElementById('loading');
     
-    // Create ship calculator rows
     let html = '';
     sampleData.ships.forEach((ship, index) => {
         html += createShipRow(ship, index);
     });
     
-    // Update DOM
     container.innerHTML = html;
     loading.style.display = 'none';
 
-    // Add event listeners for dropdown changes
     sampleData.ships.forEach((ship, index) => {
         document.getElementById(`aux1-${index}`).addEventListener('change', () => updateEHP(index));
         document.getElementById(`aux2-${index}`).addEventListener('change', () => updateEHP(index));
         document.getElementById(`aug-${index}`).addEventListener('change', () => updateEHP(index));
         
-        // Perform initial calculation
         updateEHP(index);
     });
 }
@@ -211,7 +199,7 @@ async function loadJSONData() {
 
 /**
  * Add a new ship to the calculator (for future expansion)
- * @param {Object} shipData - Ship data object
+ * @param {Object} shipData
  */
 function addShip(shipData) {
     const currentIndex = sampleData.ships.length;
@@ -220,18 +208,13 @@ function addShip(shipData) {
     const container = document.getElementById('ship-calculators');
     container.innerHTML += createShipRow(shipData, currentIndex);
     
-    // Add event listeners for new ship
     document.getElementById(`aux1-${currentIndex}`).addEventListener('change', () => updateEHP(currentIndex));
     document.getElementById(`aux2-${currentIndex}`).addEventListener('change', () => updateEHP(currentIndex));
     document.getElementById(`aug-${currentIndex}`).addEventListener('change', () => updateEHP(currentIndex));
     
-    // Initial calculation
     updateEHP(currentIndex);
 }
 
-/**
- * Export functions for external use if needed
- */
 if (typeof module !== 'undefined' && module.exports) {
     module.exports = {
         calculateEHP,
