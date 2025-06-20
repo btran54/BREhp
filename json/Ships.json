@@ -1,0 +1,21 @@
+{
+    "Ships" : [
+
+        {
+            "Name" : "Mutsuki",
+            "HP" : 1688,
+            "EVA" : 250,
+            "LCK" : 35,
+            "LVL" : 125
+        },
+        {
+            "Name" : "Kamikaze",
+            "HP" : 1764,
+            "EVA" : 250,
+            "LCK" : 86,
+            "LVL" : 125
+        }
+
+    ]
+
+}

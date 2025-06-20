@@ -1,0 +1,19 @@
+{
+    "Augments" : [
+
+        {
+            "Name" : "Hammer",
+            "HP" : 0,
+            "EVA" : 0,
+            "LCK" : 0
+        },
+        {
+            "Name" : "Dual Swords",
+            "HP" : 0,
+            "EVA" : 15,
+            "LCK" : 0
+        }
+
+    ]
+
+}

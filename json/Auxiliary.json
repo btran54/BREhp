@@ -1,0 +1,21 @@
+{
+    "Auxiliary" : [
+
+        {
+            "Name" : "Repair Toolkit",
+            "HP" : 500,
+            "HEAL" : 0.05,
+            "EVA" : 0,
+            "LCK" : 0
+        },
+        {
+            "Name" : "550 HP Aux",
+            "HP" : 550,
+            "HEAL" : 0,
+            "EVA" : 0,
+            "LCK" : 0
+        }
+
+    ]
+
+}
