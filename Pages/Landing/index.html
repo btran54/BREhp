@@ -127,7 +127,7 @@
         }
 
         .blue-road-logo {
-            width: 400px;
+            width: 800px;
             height: auto;
             filter: brightness(1.1) drop-shadow(0 8px 16px rgba(0, 0, 0, 0.2));
             transition: transform 0.3s ease;
@@ -139,8 +139,8 @@
 
         /* eHP Calculator Styles */
         .ehp-calculator {
-            width: 100%;
-            max-width: 1200px;
+            width: 90%;
+            max-width: 1600px;
             margin: 2rem 0;
             padding: 2rem;
             background: rgba(255, 255, 255, 0.05);
@@ -193,30 +193,37 @@
         .ship-calculator-container {
             display: flex;
             flex-direction: column;
-            gap: 1.5rem;
+            gap: 0.25rem;
         }
 
         .ship-row {
             display: flex;
-            align-items: center;
+            align-items: flex-end;
             gap: 1rem;
-            padding: 1rem;
+            padding: 0.75rem 1rem;
             background: rgba(255, 255, 255, 0.03);
             border-radius: 8px;
             border-left: 4px solid #3b82f6;
         }
 
+        .ship-controls {
+            flex: 3;
+            display: flex;
+            flex-direction: column;
+            gap: 0.75rem;
+        }
+
         .ship-name {
-            min-width: 120px;
             font-weight: 600;
             color: #f1f5f9;
             font-size: 1.1rem;
+            margin-bottom: 0.25rem;
         }
 
         .dropdown-group {
             display: flex;
             gap: 0.5rem;
-            flex-wrap: wrap;
+            flex-wrap: nowrap;
         }
 
         .dropdown {
@@ -225,8 +232,10 @@
             border: 1px solid rgba(100, 116, 139, 0.5);
             border-radius: 6px;
             color: #e2e8f0;
-            font-size: 0.9rem;
-            min-width: 120px;
+            font-size: 0.85rem;
+            min-width: 110px;
+            height: 42px;
+            flex: 1;
             cursor: pointer;
             transition: all 0.2s ease;
         }
@@ -243,16 +252,20 @@
         }
 
         .ehp-result {
-            flex: 1;
-            margin-left: 1rem;
+            flex: 7;
+            display: flex;
+            align-items: flex-end;
+            width: 100%;
         }
 
         .ehp-bar-container {
             position: relative;
             background: rgba(30, 41, 59, 0.6);
             border-radius: 4px;
-            height: 30px;
+            height: 42px;
             overflow: hidden;
+            width: 100%;
+            flex: 1;
         }
 
         .ehp-bar {
@@ -275,16 +288,24 @@
             z-index: 10;
         }
 
-        .ehp-scale {
-            display: flex;
-            justify-content: space-between;
-            margin-top: 4px;
-            font-size: 0.75rem;
-            color: #94a3b8;
-            opacity: 0.8;
+        .ehp-100-line {
+            position: absolute;
+            left: 75%;
+            top: 0;
+            bottom: 0;
+            width: 2px;
+            background: rgba(255, 255, 255, 0.8);
+            border-left: 2px dotted rgba(255, 255, 255, 0.8);
+            z-index: 5;
         }
 
-        .scale-min, .scale-max {
+        .ehp-100-line::before {
+            content: '100%';
+            position: absolute;
+            top: -22px;
+            left: -15px;
+            font-size: 0.7rem;
+            color: rgba(255, 255, 255, 0.8);
             font-weight: 500;
         }
 
@@ -356,7 +377,7 @@
         /* Responsive design */
         @media (max-width: 1024px) {
             .blue-road-logo {
-                width: 300px;
+                width: 600px;
             }
             
             .welcome-title {
@@ -382,7 +403,7 @@
             }
             
             .blue-road-logo {
-                width: 250px;
+                width: 500px;
             }
             
             .action-buttons {
@@ -399,28 +420,45 @@
             .ship-row {
                 flex-direction: column;
                 align-items: stretch;
-                gap: 0.5rem;
+                gap: 0.75rem;
+            }
+
+            .ship-controls {
+                flex: none;
             }
 
             .ship-name {
-                min-width: auto;
                 text-align: center;
+                margin-bottom: 0.5rem;
             }
 
             .dropdown-group {
-                justify-content: center;
+                flex-direction: column;
+                gap: 0.5rem;
+            }
+
+            .dropdown {
+                min-width: auto;
+                font-size: 0.9rem;
+                height: 44px;
             }
 
             .ehp-result {
-                margin-left: 0;
+                flex: none;
+            }
+
+            .ehp-bar-container {
+                height: 44px;
             }
 
             .calculator-title {
                 font-size: 2rem;
             }
 
-            .ehp-scale {
-                font-size: 0.7rem;
+            .ehp-100-line::before {
+                font-size: 0.6rem;
+                top: -22px;
+                left: -12px;
             }
         }
 
@@ -430,7 +468,7 @@
             }
             
             .blue-road-logo {
-                width: 200px;
+                width: 400px;
             }
             
             .btn {
@@ -571,7 +609,7 @@
                 <a href="../../index.html" class="home-link">Home</a>
             </div>
             <div class="azur-lane-section">
-                <!-- Azur Lane Logo SVG -->
+                <!-- Azur Lane Logo PNG -->
                  <img src="../../images/Azur_Lane_English_Release_Logo.png" alt="Azur Lane" class="azur-lane-logo">
             </div>
         </header>
@@ -585,8 +623,9 @@
             </section>
 
             <section class="blue-road-section">
-                <!-- Blue Road Logo SVG -->
+                <!-- Blue Road Logo PNG -->
                  <img src="../../images/Blue_Road_Logo.png" alt="Blue Road" class="blue-road-logo">
+
             </section>
 
             <!-- eHP Calculator Section -->
@@ -636,7 +675,8 @@
     <script>
         // Page-specific initialization
         document.addEventListener('DOMContentLoaded', function() {
-            setTimeout(initializeCalculator, 500);
+            // Initialize the calculator
+            setTimeout(initializeCalculator, 500); // Small delay for visual effect
 
             // Add smooth scrolling for internal links
             document.querySelectorAll('a[href^="#"]').forEach(anchor => {

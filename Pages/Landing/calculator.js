@@ -1,8 +1,16 @@
+// eHP Calculator for Blue Road Landing Page
+// ==========================================
+// Dropdown Structure:
+// 1. Auxiliary Slot 1 (Repair Toolkit, 550 HP Aux, etc.)
+// 2. Auxiliary Slot 2 (Repair Toolkit, 550 HP Aux, etc.)
+// 3. Augments Slot (Dual Swords, Hammer, etc.)
+
+// Global variables for data storage
 let shipsData = [];
 let auxiliaryData = [];
 let augmentsData = [];
 
-// Sample data
+// Sample data (replace with actual JSON loading)
 const sampleData = {
     ships: [
         { "Name": "Mutsuki", "HP": 1688, "EVA": 250, "LCK": 35, "LVL": 125 },
@@ -21,12 +29,13 @@ const sampleData = {
 };
 
 /**
- * @param {number} hp
- * @param {number} heal
- * @param {number} eva
- * @param {number} lck
- * @param {number} lvl
- * @returns {number}
+ * Calculate effective HP using the Blue Road formula
+ * @param {number} hp - Total Hit Points
+ * @param {number} heal - Healing multiplier (0-1)
+ * @param {number} eva - Evasion stat
+ * @param {number} lck - Luck stat
+ * @param {number} lvl - Ship level
+ * @returns {number} Calculated eHP value
  */
 function calculateEHP(hp, heal, eva, lck, lvl) {
     const numerator = hp * (1 + heal);
@@ -36,10 +45,10 @@ function calculateEHP(hp, heal, eva, lck, lvl) {
 
 /**
  * Create dropdown HTML for equipment selection
- * @param {Array} items
- * @param {string} id
- * @param {number} defaultIndex
- * @returns {string}
+ * @param {Array} items - Array of equipment items
+ * @param {string} id - HTML element ID
+ * @param {number} defaultIndex - Default selected index
+ * @returns {string} HTML string for dropdown
  */
 function createDropdown(items, id, defaultIndex = 0) {
     let options = '';
@@ -52,7 +61,7 @@ function createDropdown(items, id, defaultIndex = 0) {
 
 /**
  * Update eHP calculation and visual display for a specific ship
- * @param {number} shipIndex
+ * @param {number} shipIndex - Index of the ship in the ships array
  */
 function updateEHP(shipIndex) {
     const ship = sampleData.ships[shipIndex];
@@ -67,103 +76,120 @@ function updateEHP(shipIndex) {
     const auxiliary2 = sampleData.auxiliary[aux2Index];
     const augment = sampleData.augments[augIndex];
 
+    // Calculate total stats (ship base + equipment bonuses)
     const totalHP = ship.HP + auxiliary1.HP + auxiliary2.HP + augment.HP;
-    const totalHEAL = (auxiliary1.HEAL || 0) + (auxiliary2.HEAL || 0);
+    const totalHEAL = (auxiliary1.HEAL || 0) + (auxiliary2.HEAL || 0); // Multiple Repair Toolkits can stack healing
     const totalEVA = ship.EVA + auxiliary1.EVA + auxiliary2.EVA + augment.EVA;
     const totalLCK = ship.LCK + auxiliary1.LCK + auxiliary2.LCK + augment.LCK;
 
+    // Calculate eHP using the formula
     const ehp = calculateEHP(totalHP, totalHEAL, totalEVA, totalLCK, ship.LVL);
 
+    // Update visual display
     updateBarDisplay(shipIndex, ehp);
 }
 
 /**
  * Update the visual bar chart display
- * @param {number} shipIndex
- * @param {number} ehp
+ * @param {number} shipIndex - Index of the ship
+ * @param {number} ehp - Calculated eHP value
  */
 function updateBarDisplay(shipIndex, ehp) {
     const barElement = document.getElementById(`bar-${shipIndex}`);
     const textElement = document.getElementById(`text-${shipIndex}`);
     
-    textElement.textContent = ehp.toFixed(3);
+    // Calculate percentage out of 12000 (100% = 12000)
+    const percentage = Math.min((ehp / 12000) * 100, 100);
     
+    // Display as percentage with one decimal place
+    textElement.textContent = `${percentage.toFixed(1)}%`;
+    
+    // Calculate bar width based on 16000 max scale (to allow for values above 12000)
     const maxEHP = 16000;
     const barWidth = Math.min((ehp / maxEHP) * 100, 100);
     barElement.style.width = `${barWidth}%`;
 
-    // Performance tiers
+    // Update bar color based on performance tiers
     if (ehp > 12000) {
-        // Very high performance
+        // Exceptional performance (above 100%) - Bright green gradient
         barElement.style.background = 'linear-gradient(90deg, #10b981, #34d399)';
-    } else if (ehp > 8000) {
-        // High performance
+    } else if (ehp > 10000) {
+        // High performance (83-100%) - Green gradient
         barElement.style.background = 'linear-gradient(90deg, #059669, #10b981)';
-    } else if (ehp > 6000) {
-        // Medium performance
+    } else if (ehp > 8000) {
+        // Good performance (67-83%) - Blue gradient
         barElement.style.background = 'linear-gradient(90deg, #3b82f6, #60a5fa)';
+    } else if (ehp > 6000) {
+        // Average performance (50-67%) - Light blue gradient
+        barElement.style.background = 'linear-gradient(90deg, #0ea5e9, #3b82f6)';
     } else if (ehp > 4000) {
-        // Lower medium performance
+        // Below average performance (33-50%) - Orange gradient
         barElement.style.background = 'linear-gradient(90deg, #f59e0b, #fbbf24)';
     } else {
-        // Low performance
+        // Low performance (0-33%) - Red gradient
         barElement.style.background = 'linear-gradient(90deg, #ef4444, #f87171)';
     }
 }
 
 /**
  * Create HTML for a single ship calculator row
- * @param {Object} ship
- * @param {number} index
- * @returns {string}
+ * @param {Object} ship - Ship data object
+ * @param {number} index - Ship index
+ * @returns {string} HTML string for the ship row
  */
 function createShipRow(ship, index) {
     return `
         <div class="ship-row">
-            <div class="ship-name">${ship.Name}</div>
-            <div class="dropdown-group">
-                ${createDropdown(sampleData.auxiliary, `aux1-${index}`, 1)}
-                ${createDropdown(sampleData.auxiliary, `aux2-${index}`, 2)}
-                ${createDropdown(sampleData.augments, `aug-${index}`, 2)}
+            <div class="ship-controls">
+                <div class="ship-name">${ship.Name}</div>
+                <div class="dropdown-group">
+                    ${createDropdown(sampleData.auxiliary, `aux1-${index}`, 1)}
+                    ${createDropdown(sampleData.auxiliary, `aux2-${index}`, 2)}
+                    ${createDropdown(sampleData.augments, `aug-${index}`, 2)}
+                </div>
             </div>
             <div class="ehp-result">
                 <div class="ehp-bar-container">
                     <div class="ehp-bar" id="bar-${index}"></div>
-                    <div class="ehp-text" id="text-${index}">0</div>
-                </div>
-                <div class="ehp-scale">
-                    <span class="scale-min">0</span>
-                    <span class="scale-max">16000</span>
+                    <div class="ehp-text" id="text-${index}">0%</div>
+                    <div class="ehp-100-line"></div>
                 </div>
             </div>
         </div>
     `;
 }
 
+/**
+ * Initialize the calculator interface and event listeners
+ */
 function initializeCalculator() {
     const container = document.getElementById('ship-calculators');
     const loading = document.getElementById('loading');
     
+    // Create ship calculator rows
     let html = '';
     sampleData.ships.forEach((ship, index) => {
         html += createShipRow(ship, index);
     });
     
+    // Update DOM
     container.innerHTML = html;
     loading.style.display = 'none';
 
+    // Add event listeners for dropdown changes
     sampleData.ships.forEach((ship, index) => {
         document.getElementById(`aux1-${index}`).addEventListener('change', () => updateEHP(index));
         document.getElementById(`aux2-${index}`).addEventListener('change', () => updateEHP(index));
         document.getElementById(`aug-${index}`).addEventListener('change', () => updateEHP(index));
         
+        // Perform initial calculation
         updateEHP(index);
     });
 }
 
 /**
  * Load JSON data files (for future implementation)
- * @returns {Promise}
+ * @returns {Promise} Promise that resolves when data is loaded
  */
 async function loadJSONData() {
     try {
@@ -210,6 +236,9 @@ function addShip(shipData) {
     updateEHP(currentIndex);
 }
 
+/**
+ * Export functions for external use if needed
+ */
 if (typeof module !== 'undefined' && module.exports) {
     module.exports = {
         calculateEHP,
