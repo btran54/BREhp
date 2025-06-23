@@ -1,8 +1,8 @@
 let shipsData = [];
 let auxiliaryData = [];
 let augmentsData = [];
+let pinnedShips = [];
 
-// Sample data
 const sampleData = {
     ships: [
         { "Name": "Mutsuki", "HP": 1688, "EVA": 250, "LCK": 35, "LVL": 125 },
@@ -21,7 +21,6 @@ const sampleData = {
 };
 
 /**
- * Calculate effective HP using the Blue Road formula
  * @param {number} hp
  * @param {number} heal
  * @param {number} eva
@@ -36,9 +35,8 @@ function calculateEHP(hp, heal, eva, lck, lvl) {
 }
 
 /**
- * Dropdown for equipment selection
- * @param {Array} items - Items
- * @param {string} id - Item ID
+ * @param {Array} items
+ * @param {string} id
  * @param {number} defaultIndex
  * @returns {string}
  */
@@ -52,8 +50,7 @@ function createDropdown(items, id, defaultIndex = 0) {
 }
 
 /**
- * Update eHP calculation and visual display for a specific ship
- * @param {number} shipIndex - Index of the ship in the ships array
+ * @param {number} shipIndex
  */
 function updateEHP(shipIndex) {
     const ship = sampleData.ships[shipIndex];
@@ -68,20 +65,19 @@ function updateEHP(shipIndex) {
     const auxiliary2 = sampleData.auxiliary[aux2Index];
     const augment = sampleData.augments[augIndex];
 
-    // Calculate total stats (FIX THIS)
     const totalHP = ship.HP + auxiliary1.HP + auxiliary2.HP + augment.HP;
-    const totalHEAL = (auxiliary1.HEAL || 0) + (auxiliary2.HEAL || 0); // Multiple Repair Toolkits canNOT stack healing
+    const totalHEAL = (auxiliary1.HEAL || 0) + (auxiliary2.HEAL || 0); // Multiple repair tools CANNOT stack healing || Need to fix
     const totalEVA = ship.EVA + auxiliary1.EVA + auxiliary2.EVA + augment.EVA;
     const totalLCK = ship.LCK + auxiliary1.LCK + auxiliary2.LCK + augment.LCK;
 
-    // Calculate eHP
     const ehp = calculateEHP(totalHP, totalHEAL, totalEVA, totalLCK, ship.LVL);
 
     updateBarDisplay(shipIndex, ehp);
+    
+    updatePinnedShipIfExists(shipIndex, ehp);
 }
 
 /**
- * Update the visual bar chart display
  * @param {number} shipIndex
  * @param {number} ehp
  */
@@ -97,39 +93,41 @@ function updateBarDisplay(shipIndex, ehp) {
     const barWidth = Math.min((ehp / maxEHP) * 100, 100);
     barElement.style.width = `${barWidth}%`;
 
-    // Bar color based on performance tiers
+    // Performance tiers
     if (ehp > 12000) {
-        // < 100% - Bright green
+        // > 100%
         barElement.style.background = 'linear-gradient(90deg, #10b981, #34d399)';
     } else if (ehp > 10000) {
-        // 83-100% - Green
+        // 83% - 100%
         barElement.style.background = 'linear-gradient(90deg, #059669, #10b981)';
     } else if (ehp > 8000) {
-        // 67-83% - Blue
+        // 67% - 83%
         barElement.style.background = 'linear-gradient(90deg, #3b82f6, #60a5fa)';
     } else if (ehp > 6000) {
-        // 50-67% - Light blue
+        // 50% - 67%
         barElement.style.background = 'linear-gradient(90deg, #0ea5e9, #3b82f6)';
     } else if (ehp > 4000) {
-        // 33-50% - Orange
+        // 33% - 50%
         barElement.style.background = 'linear-gradient(90deg, #f59e0b, #fbbf24)';
     } else {
-        // 0-33% - Red
+        // 0% - 33%
         barElement.style.background = 'linear-gradient(90deg, #ef4444, #f87171)';
     }
 }
 
 /**
- * HTML for a single ship calculator row
- * @param {Object} ship - Ship data object
- * @param {number} index - Ship index
- * @returns {string} HTML string for the ship row
+ * @param {Object} ship
+ * @param {number} index
+ * @returns {string}
  */
 function createShipRow(ship, index) {
     return `
         <div class="ship-row">
             <div class="ship-controls">
-                <div class="ship-name">${ship.Name}</div>
+                <div class="ship-info">
+                    <span class="pin-star" id="star-${index}" onclick="togglePin(${index})" title="Pin this ship">☆</span>
+                    <div class="ship-name">${ship.Name}</div>
+                </div>
                 <div class="dropdown-group">
                     ${createDropdown(sampleData.auxiliary, `aux1-${index}`, 1)}
                     ${createDropdown(sampleData.auxiliary, `aux2-${index}`, 2)}
@@ -169,6 +167,170 @@ function initializeCalculator() {
 }
 
 /**
+ * @param {number} shipInde
+ */
+function togglePin(shipIndex) {
+    const ship = sampleData.ships[shipIndex];
+    const starElement = document.getElementById(`star-${shipIndex}`);
+    
+    if (!starElement) {
+        console.error(`Star element not found for ship ${shipIndex}`);
+        return;
+    }
+    
+    const existingIndex = pinnedShips.findIndex(pinned => pinned.shipIndex === shipIndex);
+    
+    if (existingIndex !== -1) {
+        pinnedShips.splice(existingIndex, 1);
+        starElement.textContent = '☆';
+        starElement.classList.remove('pinned');
+    } else {
+        const config = getCurrentShipConfig(shipIndex);
+        const ehp = calculateEHPForConfig(ship, config);
+        pinnedShips.push({
+            shipIndex: shipIndex,
+            shipName: ship.Name,
+            config: config,
+            eHP: ehp,
+            timestamp: Date.now()
+        });
+        starElement.textContent = '★';
+        starElement.classList.add('pinned');
+    }
+    
+    updatePinnedDisplay();
+    updatePinToggleButton();
+}
+
+/**
+ * @param {number} shipIndex
+ * @returns {Object}
+ */
+function getCurrentShipConfig(shipIndex) {
+    const aux1Index = parseInt(document.getElementById(`aux1-${shipIndex}`).value);
+    const aux2Index = parseInt(document.getElementById(`aux2-${shipIndex}`).value);
+    const augIndex = parseInt(document.getElementById(`aug-${shipIndex}`).value);
+    
+    return {
+        aux1: sampleData.auxiliary[aux1Index],
+        aux2: sampleData.auxiliary[aux2Index],
+        augment: sampleData.augments[augIndex],
+        aux1Index: aux1Index,
+        aux2Index: aux2Index,
+        augIndex: augIndex
+    };
+}
+
+/**
+ * @param {Object} ship
+ * @param {Object} config
+ * @returns {number}
+ */
+function calculateEHPForConfig(ship, config) {
+    const totalHP = ship.HP + config.aux1.HP + config.aux2.HP + config.augment.HP;
+    const totalHEAL = (config.aux1.HEAL || 0) + (config.aux2.HEAL || 0);
+    const totalEVA = ship.EVA + config.aux1.EVA + config.aux2.EVA + config.augment.EVA;
+    const totalLCK = ship.LCK + config.aux1.LCK + config.aux2.LCK + config.augment.LCK;
+    
+    return calculateEHP(totalHP, totalHEAL, totalEVA, totalLCK, ship.LVL);
+}
+
+/**
+ * @param {number} shipIndex
+ * @param {number} newEHP
+ */
+function updatePinnedShipIfExists(shipIndex, newEHP) {
+    const pinnedIndex = pinnedShips.findIndex(pinned => pinned.shipIndex === shipIndex);
+    if (pinnedIndex !== -1) {
+        const config = getCurrentShipConfig(shipIndex);
+        pinnedShips[pinnedIndex].config = config;
+        pinnedShips[pinnedIndex].eHP = newEHP;
+        updatePinnedDisplay();
+    }
+}
+
+function updatePinnedDisplay() {
+    const container = document.getElementById('pinnedShipsContainer');
+    const emptyMessage = document.getElementById('pinnedEmpty');
+    
+    if (pinnedShips.length === 0) {
+        container.innerHTML = '<div class="pinned-empty" id="pinnedEmpty">No ships pinned yet. Click the ★ next to any ship to add it here for easy comparison!</div>';
+        return;
+    }
+    
+    const sortedPinned = [...pinnedShips].sort((a, b) => b.eHP - a.eHP);
+    
+    let html = '';
+    sortedPinned.forEach((pinned, index) => {
+        const percentage = ((pinned.eHP / 12000) * 100).toFixed(1);
+        html += `
+            <div class="pinned-ship">
+                <div class="pinned-ship-header">
+                    <div class="pinned-ship-name">${pinned.shipName}</div>
+                    <button class="unpin-btn" onclick="unpinShip(${pinned.shipIndex})" title="Unpin ship">★</button>
+                </div>
+                <div class="pinned-ship-config">
+                    <strong>Equipment:</strong><br>
+                    • ${pinned.config.aux1.Name}<br>
+                    • ${pinned.config.aux2.Name}<br>
+                    • ${pinned.config.augment.Name}
+                </div>
+                <div class="pinned-ship-ehp">
+                    eHP: ${pinned.eHP.toFixed(0)} (${percentage}%)
+                </div>
+            </div>
+        `;
+    });
+    
+    container.innerHTML = html;
+}
+
+/**
+ * @param {number} shipIndex
+ */
+function unpinShip(shipIndex) {
+    const starElement = document.getElementById(`star-${shipIndex}`);
+    const existingIndex = pinnedShips.findIndex(pinned => pinned.shipIndex === shipIndex);
+    
+    if (existingIndex !== -1) {
+        pinnedShips.splice(existingIndex, 1);
+        if (starElement) {
+            starElement.textContent = '☆';
+            starElement.classList.remove('pinned');
+        }
+        updatePinnedDisplay();
+        updatePinToggleButton();
+    }
+}
+
+function updatePinToggleButton() {
+    const button = document.getElementById('pinToggleBtn');
+    if (button) {
+        if (pinnedShips.length > 0) {
+            button.classList.add('has-pinned');
+            button.title = `View ${pinnedShips.length} Pinned Ship${pinnedShips.length !== 1 ? 's' : ''}`;
+        } else {
+            button.classList.remove('has-pinned');
+            button.title = 'View Pinned Ships';
+        }
+    }
+}
+
+function togglePinnedSidebar() {
+    const sidebar = document.getElementById('pinnedSidebar');
+    if (sidebar) {
+        sidebar.classList.toggle('open');
+    }
+}
+
+function closePinnedSidebar() {
+    const sidebar = document.getElementById('pinnedSidebar');
+    if (sidebar) {
+        sidebar.classList.remove('open');
+    }
+}
+
+/**
  * Load JSON data files (for future implementation)
  * @returns {Promise} Promise that resolves when data is loaded
  */
@@ -198,7 +360,6 @@ async function loadJSONData() {
 }
 
 /**
- * Add a new ship to the calculator (for future expansion)
  * @param {Object} shipData
  */
 function addShip(shipData) {
@@ -215,11 +376,18 @@ function addShip(shipData) {
     updateEHP(currentIndex);
 }
 
+window.togglePin = togglePin;
+window.unpinShip = unpinShip;
+window.togglePinnedSidebar = togglePinnedSidebar;
+window.closePinnedSidebar = closePinnedSidebar;
+
 if (typeof module !== 'undefined' && module.exports) {
     module.exports = {
         calculateEHP,
         initializeCalculator,
         loadJSONData,
-        addShip
+        addShip,
+        togglePin,
+        unpinShip
     };
 }
