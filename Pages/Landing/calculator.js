@@ -1,7 +1,3 @@
-// calculator.js - API version that pulls from MongoDB
-// This replaces the hardcoded sample data with API calls
-
-// Global variables
 let shipsData = [];
 let auxiliaryData = [];
 let augmentsData = [];
@@ -10,10 +6,8 @@ let currentShipsPage = 1;
 let totalShips = 0;
 let isLoading = false;
 
-// API configuration
 const API_BASE_URL = 'http://localhost:3001/api';
 
-// API utility functions
 const api = {
   async get(endpoint) {
     try {
@@ -29,14 +23,10 @@ const api = {
   }
 };
 
-/**
- * Load data from API instead of hardcoded data
- */
 async function loadDataFromAPI() {
   try {
     showLoading(true, 'Loading ship data from database...');
     
-    // Load auxiliary and augments data
     console.log('Loading auxiliary and augments...');
     const [auxiliaryResponse, augmentsResponse] = await Promise.all([
       api.get('/auxiliary'),
@@ -46,11 +36,9 @@ async function loadDataFromAPI() {
     auxiliaryData = auxiliaryResponse;
     augmentsData = augmentsResponse;
     
-    // Add "None" options to the beginning of arrays
     auxiliaryData.unshift({ name: "None", hp: 0, heal: 0, eva: 0, lck: 0 });
     augmentsData.unshift({ name: "None", hp: 0, eva: 0, lck: 0 });
     
-    // Load initial ships data
     console.log('Loading ships...');
     await loadShipsData({ limit: 20 });
     
@@ -64,9 +52,6 @@ async function loadDataFromAPI() {
   }
 }
 
-/**
- * Load ships data with optional filters
- */
 async function loadShipsData(options = {}) {
   try {
     const { 
@@ -103,18 +88,12 @@ async function loadShipsData(options = {}) {
   }
 }
 
-/**
- * Calculate effective HP using the Blue Road formula
- */
 function calculateEHP(hp, heal, eva, lck, lvl) {
   const numerator = hp * (1 + heal);
   const denominator = 0.1 + (125 / (125 + eva + 2)) + ((50 - lck + 126 - lvl) / 1000);
   return numerator / denominator;
 }
 
-/**
- * Create dropdown HTML for equipment selection
- */
 function createDropdown(items, id, defaultIndex = 0) {
   let options = '';
   items.forEach((item, index) => {
@@ -125,55 +104,40 @@ function createDropdown(items, id, defaultIndex = 0) {
   return `<select class="dropdown" id="${id}">${options}</select>`;
 }
 
-/**
- * Update eHP calculation and visual display for a specific ship
- */
 function updateEHP(shipIndex) {
   const ship = shipsData[shipIndex];
   
-  // Get selected equipment indices
   const aux1Index = parseInt(document.getElementById(`aux1-${shipIndex}`).value);
   const aux2Index = parseInt(document.getElementById(`aux2-${shipIndex}`).value);
   const augIndex = parseInt(document.getElementById(`aug-${shipIndex}`).value);
 
-  // Get equipment data
   const auxiliary1 = auxiliaryData[aux1Index];
   const auxiliary2 = auxiliaryData[aux2Index];
   const augment = augmentsData[augIndex];
 
-  // Calculate total stats
   const totalHP = ship.hp + auxiliary1.hp + auxiliary2.hp + augment.hp;
   const totalHEAL = (auxiliary1.heal || 0) + (auxiliary2.heal || 0);
   const totalEVA = ship.eva + auxiliary1.eva + auxiliary2.eva + augment.eva;
   const totalLCK = ship.lck + auxiliary1.lck + auxiliary2.lck + augment.lck;
 
-  // Calculate eHP using the formula
   const ehp = calculateEHP(totalHP, totalHEAL, totalEVA, totalLCK, ship.lvl);
 
-  // Update visual display
   updateBarDisplay(shipIndex, ehp);
   
-  // Update pinned ship if this ship is currently pinned
   updatePinnedShipIfExists(shipIndex, ehp);
 }
 
-/**
- * Update the visual bar chart display
- */
 function updateBarDisplay(shipIndex, ehp) {
   const barElement = document.getElementById(`bar-${shipIndex}`);
   const textElement = document.getElementById(`text-${shipIndex}`);
   
-  // Calculate actual percentage (can exceed 100%)
   const percentage = (ehp / 12000) * 100;
   textElement.textContent = `${percentage.toFixed(1)}%`;
   
-  // Calculate bar width (still capped for visual display)
   const maxEHP = 16000;
   const barWidth = Math.min((ehp / maxEHP) * 100, 100);
   barElement.style.width = `${barWidth}%`;
 
-  // Update bar color based on performance tiers
   if (ehp > 12000) {
     barElement.style.background = 'linear-gradient(90deg, #10b981, #34d399)';
   } else if (ehp > 10000) {
@@ -189,9 +153,6 @@ function updateBarDisplay(shipIndex, ehp) {
   }
 }
 
-/**
- * Create HTML for a single ship calculator row
- */
 function createShipRow(ship, index) {
   return `
     <div class="ship-row">
@@ -217,24 +178,18 @@ function createShipRow(ship, index) {
   `;
 }
 
-/**
- * Initialize the calculator interface and event listeners
- */
 async function initializeCalculator() {
   const container = document.getElementById('ship-calculators');
   const loading = document.getElementById('loading');
   
   try {
-    // Load data from API instead of hardcoded data
     const success = await loadDataFromAPI();
     if (!success) return;
     
-    // Create ship calculator rows
     renderShipRows();
     
     loading.style.display = 'none';
     
-    // Show success message
     console.log(`🚀 Calculator initialized with ${shipsData.length} ships from MongoDB!`);
     
   } catch (error) {
@@ -243,9 +198,6 @@ async function initializeCalculator() {
   }
 }
 
-/**
- * Render ship rows in the container
- */
 function renderShipRows(append = false) {
   const container = document.getElementById('ship-calculators');
   
@@ -260,7 +212,6 @@ function renderShipRows(append = false) {
     container.innerHTML = html;
   }
 
-  // Add event listeners for dropdown changes
   shipsData.forEach((ship, index) => {
     const aux1Element = document.getElementById(`aux1-${index}`);
     const aux2Element = document.getElementById(`aux2-${index}`);
@@ -270,14 +221,10 @@ function renderShipRows(append = false) {
     if (aux2Element) aux2Element.addEventListener('change', () => updateEHP(index));
     if (augElement) augElement.addEventListener('change', () => updateEHP(index));
     
-    // Perform initial calculation
     updateEHP(index);
   });
 }
 
-/**
- * Show/hide loading indicator with custom message
- */
 function showLoading(show, message = 'Loading ship data...') {
   const loading = document.getElementById('loading');
   if (loading) {
@@ -286,9 +233,6 @@ function showLoading(show, message = 'Loading ship data...') {
   }
 }
 
-/**
- * Show error message
- */
 function showError(message) {
   const container = document.getElementById('ship-calculators');
   container.innerHTML = `
@@ -305,7 +249,6 @@ function showError(message) {
   `;
 }
 
-// Keep all the existing pinning functions unchanged
 function togglePin(shipIndex) {
   const ship = shipsData[shipIndex];
   const starElement = document.getElementById(`star-${shipIndex}`);
@@ -450,7 +393,6 @@ function closePinnedSidebar() {
   }
 }
 
-// Make functions available globally
 window.togglePin = togglePin;
 window.unpinShip = unpinShip;
 window.togglePinnedSidebar = togglePinnedSidebar;

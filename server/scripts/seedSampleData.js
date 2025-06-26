@@ -104,13 +104,11 @@ async function seedSampleData() {
     
     console.log('Connected to MongoDB');
     
-    // Clear existing data
     console.log('Clearing existing data...');
     await Ship.deleteMany({});
     await Auxiliary.deleteMany({});
     await Augment.deleteMany({});
     
-    // Insert sample data
     console.log('Inserting sample ships...');
     await Ship.insertMany(sampleShips);
     
