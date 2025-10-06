@@ -6,7 +6,7 @@ let currentShipsPage = 1;
 let totalShips = 0;
 let isLoading = false;
 
-const API_BASE_URL = 'http://localhost:3001/api';
+const API_BASE_URL = 'https://brehp.onrender.com/api';
 
 const api = {
   async get(endpoint) {
