@@ -11,7 +11,7 @@ const API_BASE_URL = 'http://localhost:3001/api';
 const api = {
   async get(endpoint) {
     try {
-      const response = await fetch(`${API_BASE_URL}${endpoint}`);
+      const response = await fetch(`${API_BASE_URL}${endpoint}`); 
       if (!response.ok) {
         throw new Error(`HTTP error! status: ${response.status}`);
       }
@@ -42,11 +42,11 @@ async function loadDataFromAPI() {
     console.log('Loading ships...');
     await loadShipsData({ limit: 20 });
     
-    console.log('✅ Data loaded successfully from MongoDB!');
+    console.log('Data loaded successfully from MongoDB!');
     showLoading(false);
     return true;
   } catch (error) {
-    console.error('❌ Error loading data from API:', error);
+    console.error('Error loading data from API:', error);
     showError('Failed to load ship data from database. Make sure the backend server is running on port 3001.');
     return false;
   }
@@ -139,17 +139,17 @@ function updateBarDisplay(shipIndex, ehp) {
   barElement.style.width = `${barWidth}%`;
 
   if (ehp > 12000) {
-    barElement.style.background = 'linear-gradient(90deg, #10b981, #34d399)';
+    barElement.style.background = 'linear-gradient(90deg,#10b981,#34d399)';
   } else if (ehp > 10000) {
-    barElement.style.background = 'linear-gradient(90deg, #059669, #10b981)';
+    barElement.style.background = 'linear-gradient(90deg,#059669,#10b981)';
   } else if (ehp > 8000) {
-    barElement.style.background = 'linear-gradient(90deg, #3b82f6, #60a5fa)';
+    barElement.style.background = 'linear-gradient(90deg,#3b82f6,#60a5fa)';
   } else if (ehp > 6000) {
-    barElement.style.background = 'linear-gradient(90deg, #0ea5e9, #3b82f6)';
+    barElement.style.background = 'linear-gradient(90deg,#0ea5e9,#3b82f6)';
   } else if (ehp > 4000) {
-    barElement.style.background = 'linear-gradient(90deg, #f59e0b, #fbbf24)';
+    barElement.style.background = 'linear-gradient(90deg,#f59e0b,#fbbf24)';
   } else {
-    barElement.style.background = 'linear-gradient(90deg, #ef4444, #f87171)';
+    barElement.style.background = 'linear-gradient(90deg,#ef4444,#f87171)';
   }
 }
 
@@ -159,7 +159,7 @@ function createShipRow(ship, index) {
       <div class="ship-controls">
         <div class="ship-info">
           <span class="pin-star" id="star-${index}" onclick="togglePin(${index})" title="Pin this ship">☆</span>
-          <div class="ship-name">${ship.name}</div>
+          <div class="ship-name" data-name-length="${ship.name.length}">${ship.name}</div>
         </div>
         <div class="dropdown-group">
           ${createDropdown(auxiliaryData, `aux1-${index}`, 1)}
@@ -177,7 +177,6 @@ function createShipRow(ship, index) {
     </div>
   `;
 }
-
 async function initializeCalculator() {
   const container = document.getElementById('ship-calculators');
   const loading = document.getElementById('loading');
@@ -190,7 +189,7 @@ async function initializeCalculator() {
     
     loading.style.display = 'none';
     
-    console.log(`🚀 Calculator initialized with ${shipsData.length} ships from MongoDB!`);
+    console.log(`Calculator initialized with ${shipsData.length} ships from MongoDB!`);
     
   } catch (error) {
     console.error('Error initializing calculator:', error);

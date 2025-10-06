@@ -25,22 +25,37 @@ const shipSchema = new mongoose.Schema({
   },
   rarity: {
     type: String,
-    enum: ['Common', 'Rare', 'Elite', 'Super Rare', 'Ultra Rare'],
-    required: true
+    enum: ['Common', 'Rare', 'Elite', 'Super Rare', 'Ultra Rare']
   },
   shipType: {
     type: String,
-    enum: ['DD', 'CL', 'CA', 'BC', 'BB', 'CV', 'CVL', 'SS', 'AR', 'BM'],
-    required: true
+    enum: ['DD', 'CL', 'CA', 'BC', 'BB', 'CV', 'CVL', 'SS', 'AR', 'BM', 'CB']  // Added CB
   },
   faction: {
+    type: String
+  },
+  armor: {
     type: String,
-    required: true
+    enum: ['Light', 'Medium', 'Heavy', 'L', 'M', 'H']
   },
   isRetrofit: {
     type: Boolean,
     default: false
-  }
+  },
+  // New optional fields for future use
+  aa: Number,
+  hpExtra: Number,
+  ehpRaw: Number,
+  hpBoost: Number,
+  hpRaw: Number,
+  uptime: [Number],
+  evaBoost: [Number],
+  evaRate: [Number],
+  aaBoost: [Number],
+  dmgRed: [Number],
+  fpDmgRed: [Number],
+  trpDmgRed: [Number],
+  aviDmgRed: [Number]
 }, {
   timestamps: true
 });

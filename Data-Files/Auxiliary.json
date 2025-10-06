@@ -1,0 +1,24 @@
+{
+    "Repair Toolkit" : {
+        "Name" : "Repair Toolkit",
+        "HP" : 500,
+        "HPBoost" : 0.05,
+        "EVA" : 0,
+        "LCK" : 0
+    },
+    "550 HP Aux" : {
+        "Name" : "550 HP Aux",
+        "HP" : 550,
+        "HPBoost" : 0,
+        "EVA" : 0,
+        "LCK" : 0
+    },
+    "Improved Hydraulic Rudder" : {
+        "Name" : "Improved Hydraulic Rudder",
+        "HP" : 60,
+        "HPBoost" : 0,
+        "EVA" : 40,
+        "LCK" : 0
+    }   
+
+}

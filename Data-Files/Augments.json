@@ -1,0 +1,23 @@
+{
+    "Hammer" : {
+        "Name" : "Hammer",
+        "HP" : 0,
+        "HPBoost" : 0.000,
+        "EVA" : 0,
+        "LCK" : 0
+    },
+    "Dual Swords" : {
+        "Name" : "Dual Swords",
+        "HP" : 0,
+        "HPBoost" : 0.000,
+        "EVA" : 15,
+        "LCK" : 0
+    },
+    "Lance" : {
+        "Name" : "Lance",
+        "HP" : 0,
+        "HPBoost" : 0.000,
+        "EVA" : 0,
+        "LCK" : 0
+    }
+}
