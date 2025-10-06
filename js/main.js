@@ -38,13 +38,4 @@ document.addEventListener('DOMContentLoaded', () => {
     });
 
     window.addEventListener('resize', handleResize);
-
-    const currentPath = window.location.pathname;
-    const links = document.querySelectorAll('.sidebar a');
-    
-    links.forEach(link => {
-        if (link.getAttribute('href') && currentPath.includes(link.getAttribute('href'))) {
-            link.classList.add('active');
-        }
-    });
 });
