@@ -15,7 +15,6 @@ app.use(cors({
     'https://btran54.github.io'  
   ]
 }));
-
 app.use(express.json());
 
 // MongoDB connection
