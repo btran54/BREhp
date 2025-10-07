@@ -1,15 +1,15 @@
 {
   "files": {
-    "main.css": "/BREhp/Pages/FleetBuilder/static/css/main.ac3a510a.css",
-    "main.js": "/BREhp/Pages/FleetBuilder/static/js/main.ec6cf903.js",
+    "main.css": "/BREhp/Pages/FleetBuilder/static/css/main.5193030d.css",
+    "main.js": "/BREhp/Pages/FleetBuilder/static/js/main.f7e609ef.js",
     "static/js/453.cbe2879e.chunk.js": "/BREhp/Pages/FleetBuilder/static/js/453.cbe2879e.chunk.js",
     "index.html": "/BREhp/Pages/FleetBuilder/index.html",
-    "main.ac3a510a.css.map": "/BREhp/Pages/FleetBuilder/static/css/main.ac3a510a.css.map",
-    "main.ec6cf903.js.map": "/BREhp/Pages/FleetBuilder/static/js/main.ec6cf903.js.map",
+    "main.5193030d.css.map": "/BREhp/Pages/FleetBuilder/static/css/main.5193030d.css.map",
+    "main.f7e609ef.js.map": "/BREhp/Pages/FleetBuilder/static/js/main.f7e609ef.js.map",
     "453.cbe2879e.chunk.js.map": "/BREhp/Pages/FleetBuilder/static/js/453.cbe2879e.chunk.js.map"
   },
   "entrypoints": [
-    "static/css/main.ac3a510a.css",
-    "static/js/main.ec6cf903.js"
+    "static/css/main.5193030d.css",
+    "static/js/main.f7e609ef.js"
   ]
 }
