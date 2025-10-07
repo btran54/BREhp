@@ -1,8 +1,8 @@
 const express = require('express');
 const router = express.Router();
-const Ship = require('../models/Ships');
-const Auxiliary = require('../models/Auxiliary');
-const Augment = require('../models/Augments');
+const Ship = require('../models/Ships.js');
+const Auxiliary = require('../models/Auxiliary.js');
+const Augment = require('../models/Augments.js');
 
 // Helper function to calculate eHP
 function calculateEHP(hp, heal, eva, lck, lvl) {
