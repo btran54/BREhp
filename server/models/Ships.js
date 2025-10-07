@@ -29,7 +29,7 @@ const shipSchema = new mongoose.Schema({
   },
   shipType: {
     type: String,
-    enum: ['DD', 'CL', 'CA', 'BC', 'BB', 'CV', 'CVL', 'SS', 'AR', 'BM', 'CB']  // Added CB
+    enum: ['DD', 'CL', 'CA', 'BC', 'BB', 'CV', 'CVL', 'SS', 'AR', 'BM', 'CB']
   },
   faction: {
     type: String
@@ -42,7 +42,11 @@ const shipSchema = new mongoose.Schema({
     type: Boolean,
     default: false
   },
-  // New optional fields for future use
+  // Default equipment configuration
+  defaultEq1: String,
+  defaultEq2: String,
+  defaultAug: String,
+  // Optional fields for future use
   aa: Number,
   hpExtra: Number,
   ehpRaw: Number,

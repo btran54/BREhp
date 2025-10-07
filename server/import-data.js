@@ -21,7 +21,7 @@ async function importData() {
     const shipsData = shipsDataRaw.Ships;
 
     // Import auxiliaries
-    console.log('📥 Importing/updating auxiliaries...');
+    console.log('🔥 Importing/updating auxiliaries...');
     let auxCount = 0;
     for (const aux of auxiliaryData) {
       await Auxiliary.findOneAndUpdate(
@@ -40,7 +40,7 @@ async function importData() {
     console.log(`✅ Processed ${auxCount} auxiliaries`);
 
     // Import augments
-    console.log('📥 Importing/updating augments...');
+    console.log('🔥 Importing/updating augments...');
     let augCount = 0;
     for (const aug of augmentsData) {
       await Augment.findOneAndUpdate(
@@ -58,19 +58,24 @@ async function importData() {
     console.log(`✅ Processed ${augCount} augments`);
 
     // Import ships with extra fields
-    console.log('📥 Importing/updating ships...');
+    console.log('🔥 Importing/updating ships...');
     let shipCount = 0;
     for (const ship of shipsData) {
       const shipData = {
         name: ship.Name,
         nationality: ship.Nationality,
         shipType: ship.TYP,
-        armor: ship.ARMOR || ship.Armor,  // Handle both formats
+        armor: ship.ARMOR || ship.Armor,
         hp: ship.HP,
         eva: ship.EVA,
         lck: ship.LCK,
         lvl: ship.LVL
       };
+
+      // Add default equipment fields
+      if (ship.DefaultEq1) shipData.defaultEq1 = ship.DefaultEq1;
+      if (ship.DefaultEq2) shipData.defaultEq2 = ship.DefaultEq2;
+      if (ship.DefaultAug) shipData.defaultAug = ship.DefaultAug;
 
       // Add extra fields if they exist (for future use)
       if (ship.AA !== undefined) shipData.aa = ship.AA;
