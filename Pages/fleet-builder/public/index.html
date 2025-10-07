@@ -1,43 +1,186 @@
 <!DOCTYPE html>
 <html lang="en">
-  <head>
-    <meta charset="utf-8" />
-    <link rel="icon" href="%PUBLIC_URL%/favicon.ico" />
-    <meta name="viewport" content="width=device-width, initial-scale=1" />
-    <meta name="theme-color" content="#000000" />
-    <meta
-      name="description"
-      content="Web site created using create-react-app"
-    />
-    <link rel="apple-touch-icon" href="%PUBLIC_URL%/logo192.png" />
-    <!--
-      manifest.json provides metadata used when your web app is installed on a
-      user's mobile device or desktop. See https://developers.google.com/web/fundamentals/web-app-manifest/
-    -->
-    <link rel="manifest" href="%PUBLIC_URL%/manifest.json" />
-    <!--
-      Notice the use of %PUBLIC_URL% in the tags above.
-      It will be replaced with the URL of the `public` folder during the build.
-      Only files inside the `public` folder can be referenced from the HTML.
-
-      Unlike "/favicon.ico" or "favicon.ico", "%PUBLIC_URL%/favicon.ico" will
-      work correctly both with client-side routing and a non-root public URL.
-      Learn how to configure a non-root public URL by running `npm run build`.
-    -->
-    <title>React App</title>
-  </head>
-  <body>
-    <noscript>You need to enable JavaScript to run this app.</noscript>
-    <div id="root"></div>
-    <!--
-      This HTML file is a template.
-      If you open it directly in the browser, you will see an empty page.
-
-      You can add webfonts, meta tags, or analytics to this file.
-      The build step will place the bundled scripts into the <body> tag.
-
-      To begin the development, run `npm start` or `yarn start`.
-      To create a production bundle, use `npm run build` or `yarn build`.
-    -->
-  </body>
+<head>
+  <meta charset="utf-8" />
+  <link rel="icon" href="%PUBLIC_URL%/favicon.ico" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <meta name="theme-color" content="#000000" />
+  <meta name="description" content="Azur Lane Fleet Builder" />
+  <title>Fleet Builder - Blue Road eHP</title>
+  <style>
+    body {
+      margin: 0;
+      font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, sans-serif;
+    }
+    
+    /* Sidebar styles */
+    .sidebar {
+      height: 100%;
+      width: 0;
+      position: fixed;
+      z-index: 1000;
+      top: 0;
+      left: 0;
+      background: linear-gradient(180deg, rgba(30, 41, 59, 0.95) 0%, rgba(15, 23, 42, 0.95) 100%);
+      backdrop-filter: blur(10px);
+      overflow-x: hidden;
+      transition: 0.3s;
+      padding-top: 60px;
+      box-shadow: 2px 0 10px rgba(0, 0, 0, 0.3);
+    }
+    
+    .sidebar a {
+      padding: 15px 25px;
+      text-decoration: none;
+      font-size: 18px;
+      color: #e2e8f0;
+      display: block;
+      transition: 0.3s;
+      border-left: 3px solid transparent;
+    }
+    
+    .sidebar a:hover {
+      color: #60a5fa;
+      background: rgba(96, 165, 250, 0.1);
+      border-left-color: #60a5fa;
+    }
+    
+    .sidebar .closebtn {
+      position: absolute;
+      top: 10px;
+      right: 25px;
+      font-size: 36px;
+      color: #94a3b8;
+      cursor: pointer;
+    }
+    
+    .sidebar .closebtn:hover {
+      color: #f87171;
+    }
+    
+    /* Header */
+    .page-header {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 1.5rem 2rem;
+      background: rgba(0, 0, 0, 0.1);
+      backdrop-filter: blur(10px);
+      position: sticky;
+      top: 0;
+      z-index: 100;
+    }
+    
+    .nav-section {
+      display: flex;
+      align-items: center;
+      gap: 1.5rem;
+    }
+    
+    .hamburger-btn {
+      background: none;
+      border: none;
+      color: white;
+      font-size: 2rem;
+      cursor: pointer;
+      padding: 0.75rem;
+      border-radius: 6px;
+      transition: background-color 0.2s;
+    }
+    
+    .hamburger-btn:hover {
+      background: rgba(255, 255, 255, 0.1);
+    }
+    
+    .home-link {
+      color: white;
+      text-decoration: none;
+      font-weight: 500;
+      font-size: 1.3rem;
+      padding: 1rem 2rem;
+      border-radius: 6px;
+      transition: background-color 0.2s;
+    }
+    
+    .home-link:hover {
+      background: rgba(255, 255, 255, 0.1);
+    }
+    
+    .azur-lane-logo {
+      width: 160px;
+      height: auto;
+      filter: brightness(1.2);
+    }
+    
+    /* Footer */
+    .page-footer {
+      padding: 2rem;
+      text-align: center;
+      background: rgba(0, 0, 0, 0.2);
+      backdrop-filter: blur(10px);
+      margin-top: 2rem;
+    }
+    
+    .company-info {
+      font-size: 0.8rem;
+      opacity: 0.8;
+      line-height: 1.4;
+      margin-bottom: 0.5rem;
+      font-weight: 300;
+      color: white;
+    }
+    
+    .tagline {
+      font-size: 0.9rem;
+      opacity: 0.9;
+      font-weight: 300;
+      color: white;
+    }
+  </style>
+</head>
+<body>
+  <noscript>You need to enable JavaScript to run this app.</noscript>
+  
+  <!-- Sidebar -->
+  <div id="mySidebar" class="sidebar">
+    <a href="javascript:void(0)" class="closebtn" onclick="closeNav()">×</a>
+    <a href="/BREhp/">Home</a>
+    <a href="/BREhp/Pages/FleetBuilder/">Fleet Builder</a>
+    <a href="/BREhp/Pages/About/index.html">About Us</a>
+    <a href="/BREhp/Pages/Doc/index.html">Documentation</a>
+    <a href="/BREhp/Pages/Data/index.html">Data</a>
+  </div>
+  
+  <!-- Header -->
+  <header class="page-header">
+    <div class="nav-section">
+      <button class="hamburger-btn" onclick="openNav()">☰</button>
+      <a href="/BREhp/" class="home-link">Home</a>
+    </div>
+    <div>
+      <img src="https://btran54.github.io/BREhp/images/Azur_Lane_English_Release_Logo.png" alt="Azur Lane" class="azur-lane-logo">
+    </div>
+  </header>
+  
+  <!-- React App -->
+  <div id="root"></div>
+  
+  <!-- Footer -->
+  <footer class="page-footer">
+    <p class="company-info">
+      Blue Road eHP Ltd. Co. Inc. LLC. LLP. PLC. Corp. B.V. GmbH. S.A. AG N.V. Pty Ltd. S.r.l. K.K. S.à r.l. Ltda. Oy Sp. z o.o. A/S SpA SA/NV A.C. EEIG K.S. SNC ScS LLP OÜR d.o.o. JSC PBC CIC s.u. OÜ KL. Rt. K.K.T.
+    </p>
+    <p class="tagline">Providing reliable Azur Lane data since 2024</p>
+  </footer>
+  
+  <script>
+    function openNav() {
+      document.getElementById("mySidebar").style.width = "250px";
+    }
+    
+    function closeNav() {
+      document.getElementById("mySidebar").style.width = "0";
+    }
+  </script>
+</body>
 </html>

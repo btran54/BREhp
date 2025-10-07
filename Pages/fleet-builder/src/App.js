@@ -103,8 +103,6 @@ function App() {
   return (
     <div className="min-h-screen p-8">
       <div className="max-w-7xl mx-auto">
-        <h1 className="text-5xl font-light text-center mb-2">Fleet Builder</h1>
-        <p className="text-slate-300 text-center mb-8">Build and optimize your Azur Lane fleet</p>
         
         {/* Fleet Display */}
         <div className="bg-white/5 backdrop-blur-lg rounded-lg p-6 border border-white/10 mb-8">
