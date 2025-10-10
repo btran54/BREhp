@@ -103,12 +103,12 @@ function App() {
   return (
     <div className="min-h-screen p-8">
       <div className="max-w-7xl mx-auto">
-        <div className="flex justify-between items-start mb-2">
+        <div className="relative mb-8">
           <div className="flex-1">
             <h1 className="text-5xl font-light text-center">Fleet Builder</h1>
-            <p className="text-slate-300 text-center mb-8">Build and optimize your Azur Lane fleet</p>
+            <p className="text-slate-300 text-center">Build and optimize your Azur Lane fleet</p>
           </div>
-          <p className="text-slate-400 italic text-left max-w-[250px] leading-tight" style={{ fontSize: '0.95rem' }}>
+          <p className="absolute top-0 right-0 text-slate-400 italic text-left max-w-[250px] leading-tight" style={{ fontSize: '0.95rem' }}>
             *These default configurations are the most common and readily accessible <br/>items
           </p>
         </div>
