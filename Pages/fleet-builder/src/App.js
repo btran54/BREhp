@@ -104,91 +104,64 @@ function App() {
     <div className="min-h-screen p-8">
       <div className="max-w-7xl mx-auto">
         <div className="relative mb-8">
-          <div className="flex-1">
-            <h1 className="text-5xl font-light text-center">Fleet Builder</h1>
-            <p className="text-slate-300 text-center">Build and optimize your Azur Lane fleet</p>
-          </div>
-          <p className="absolute top-0 right-0 text-slate-400 italic text-left max-w-[250px] leading-tight" style={{ fontSize: '0.95rem' }}>
-            *These default configurations are the most common and readily accessible <br/>items
+          <h1 className="text-5xl font-light text-center">Fleet Builder</h1>
+          <p className="text-slate-300 text-center">Build and optimize your Azur Lane fleet</p>
+          
+          <p className="absolute top-0 right-0 text-slate-400 italic text-left max-w-[250px] leading-tight" style={{ fontSize: 'clamp(0.5rem, 2vw, 0.95rem)' }}>
+            *These default configurations are the most common<br/>and readily accessible items
           </p>
         </div>
-
+        
         {/* Fleet Display */}
         <div className="bg-white/5 backdrop-blur-lg rounded-lg p-6 border border-white/10 mb-8">
-          <div className="flex justify-between items-center mb-6">
-            <h2 className="text-2xl font-light">Your Fleet</h2>
-            <div className="flex gap-4 items-center">
-              <p className="text-lg text-blue-400 font-semibold">
-                Total eHP: {totalEhp.toLocaleString()}
-              </p>
+          <div className="flex justify-between items-center mb-4">
+            <h2 className="text-2xl font-semibold text-slate-200">Your Fleet</h2>
+            <div className="flex items-center gap-4">
+              <span className="text-blue-400 text-lg font-medium">
+                Total eHP: {calculateTotalEHP()}
+              </span>
               <button
-                onClick={handleClearFleet}
-                className="px-4 py-2 bg-red-500/20 border border-red-500/40 rounded-lg text-slate-200 hover:bg-red-500/30 transition-all text-sm"
+                onClick={clearFleet}
+                className="px-4 py-2 bg-red-500/20 hover:bg-red-500/30 text-red-300 rounded-lg transition-colors text-sm"
               >
                 Clear Fleet
               </button>
             </div>
           </div>
-          
+                    
           {/* Main Fleet */}
           <div className="mb-6">
-            <h3 className="text-slate-300 mb-3 font-medium">Main Fleet</h3>
+            <h3 className="text-lg font-medium text-slate-300 mb-3">Main Fleet</h3>
             <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-              <FleetSlot 
-                position="Main 1" 
-                ship={fleet.main1}
-                slotId="main1" 
-                onRemove={() => handleRemoveShip('main1')}
-                onClick={() => setSelectingSlot('main1')}
-                onDrop={handleDrop}
-              />
-              <FleetSlot 
-                position="Main 2" 
-                ship={fleet.main2}
-                slotId="main2" 
-                onRemove={() => handleRemoveShip('main2')}
-                onClick={() => setSelectingSlot('main2')}
-                onDrop={handleDrop}
-              />
-              <FleetSlot 
-                position="Main 3" 
-                ship={fleet.main3}
-                slotId="main3" 
-                onRemove={() => handleRemoveShip('main3')}
-                onClick={() => setSelectingSlot('main3')}
-                onDrop={handleDrop}
-              />
+              {[0, 1, 2].map((index) => (
+                <FleetSlot
+                  key={`main-${index}`}
+                  position={`Main ${index + 1}`}
+                  ship={fleet.main[index]}
+                  onRemove={() => removeShip('main', index)}
+                  onClick={() => handleSlotClick('main', index)}
+                  onDrop={handleDrop}
+                  slotId={`main-${index}`}
+                />
+              ))}
             </div>
           </div>
-          
-          {/* Vanguard Fleet */}
+
+          {/* Vanguard */}
           <div>
-            <h3 className="text-slate-300 mb-3 font-medium">Vanguard</h3>
+            <h3 className="text-lg font-medium text-slate-300 mb-3">Vanguard</h3>
             <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-              <FleetSlot 
-                position="Vanguard 1" 
-                ship={fleet.vanguard1}
-                slotId="vanguard1" 
-                onRemove={() => handleRemoveShip('vanguard1')}
-                onClick={() => setSelectingSlot('vanguard1')}
-                onDrop={handleDrop}
-              />
-              <FleetSlot 
-                position="Vanguard 2" 
-                ship={fleet.vanguard2}
-                slotId="vanguard2" 
-                onRemove={() => handleRemoveShip('vanguard2')}
-                onClick={() => setSelectingSlot('vanguard2')}
-                onDrop={handleDrop}
-              />
-              <FleetSlot 
-                position="Vanguard 3" 
-                ship={fleet.vanguard3}
-                slotId="vanguard3" 
-                onRemove={() => handleRemoveShip('vanguard3')}
-                onClick={() => setSelectingSlot('vanguard3')}
-                onDrop={handleDrop}
-              />
+              {[0, 1, 2].map((index) => (
+                <FleetSlot
+                  key={`vanguard-${index}`}
+                  position={`Vanguard ${index + 1}`}
+                  ship={fleet.vanguard[index]}
+                  onRemove={() => removeShip('vanguard', index)}
+                  onClick={() => handleSlotClick('vanguard', index)}
+                  onDrop={handleDrop}
+                  slotId={`vanguard-${index}`}
+                />
+              ))}
             </div>
           </div>
         </div>
