@@ -109,7 +109,7 @@ function App() {
             <p className="text-slate-300 text-center mb-8">Build and optimize your Azur Lane fleet</p>
           </div>
           <p className="text-slate-400 italic text-left max-w-[250px] leading-tight" style={{ fontSize: '0.95rem' }}>
-            *These default configurations are the most common<br/>and readily accessible items
+            *These default configurations are the most common and readily accessible <br/>items
           </p>
         </div>
 
