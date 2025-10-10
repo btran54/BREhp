@@ -88,12 +88,18 @@ async function loadShipsData(options = {}) {
   }
 }
 
-function calculateEHP(hp, heal, eva, lck, lvl) {
+function calculateEHP(hp, heal, eva, lck, lvl, evaBoost = 0, dmgRed = 0, evaRate = 0) {
+  const levelFactor = 1 / (1 + 0.02 * (126 - lvl));
+  
+  const dmgRedFactor = 1 / (1 - dmgRed);
+  
+  const effectiveEVA = eva * (1 + evaBoost);
+  
   const numerator = hp * (1 + heal);
-  const denominator = 0.1 + (125 / (125 + eva + 2)) + ((50 - lck + 126 - lvl) / 1000);
-  return numerator / denominator;
+  const denominator = 0.1 + (125 / (215 + effectiveEVA + 2)) + ((50 - lck + 126 - lvl) / 1000) - evaRate;
+  
+  return levelFactor * dmgRedFactor * (numerator / denominator);
 }
-
 function createDropdown(items, id, defaultIndex = 0) {
   let options = '';
   items.forEach((item, index) => {
@@ -119,11 +125,22 @@ function updateEHP(shipIndex) {
   const totalHEAL = (auxiliary1.heal || 0) + (auxiliary2.heal || 0);
   const totalEVA = ship.eva + auxiliary1.eva + auxiliary2.eva + augment.eva;
   const totalLCK = ship.lck + auxiliary1.lck + auxiliary2.lck + augment.lck;
+  
+  // Average for array values
+  const evaBoost = Array.isArray(ship.evaBoost) && ship.evaBoost.length > 0
+    ? ship.evaBoost.reduce((sum, val) => sum + val, 0) / ship.evaBoost.length 
+    : (ship.evaBoost || 0);
 
-  const ehp = calculateEHP(totalHP, totalHEAL, totalEVA, totalLCK, ship.lvl);
+  const dmgRed = Array.isArray(ship.dmgRed) && ship.dmgRed.length > 0
+    ? ship.dmgRed.reduce((sum, val) => sum + val, 0) / ship.dmgRed.length 
+    : (ship.dmgRed || 0);
+
+  const evaRate = Array.isArray(ship.evaRate) && ship.evaRate.length > 0
+    ? ship.evaRate.reduce((sum, val) => sum + val, 0) / ship.evaRate.length 
+    : (ship.evaRate || 0);
+    const ehp = calculateEHP(totalHP, totalHEAL, totalEVA, totalLCK, ship.lvl, evaBoost, dmgRed, evaRate);
 
   updateBarDisplay(shipIndex, ehp);
-  
   updatePinnedShipIfExists(shipIndex, ehp);
 }
 
@@ -154,6 +171,10 @@ function updateBarDisplay(shipIndex, ehp) {
 }
 
 function createShipRow(ship, index) {
+  const defaultAux1Index = auxiliaryData.findIndex(aux => aux.name === ship.defaultEq1) || 1;
+  const defaultAux2Index = auxiliaryData.findIndex(aux => aux.name === ship.defaultEq2) || 2;
+  const defaultAugIndex = augmentsData.findIndex(aug => aug.name === ship.defaultAug) || 1;
+  
   return `
     <div class="ship-row">
       <div class="ship-controls">
@@ -162,9 +183,9 @@ function createShipRow(ship, index) {
           <div class="ship-name" data-name-length="${ship.name.length}">${ship.name}</div>
         </div>
         <div class="dropdown-group">
-          ${createDropdown(auxiliaryData, `aux1-${index}`, 1)}
-          ${createDropdown(auxiliaryData, `aux2-${index}`, 2)}
-          ${createDropdown(augmentsData, `aug-${index}`, 1)}
+          ${createDropdown(auxiliaryData, `aux1-${index}`, defaultAux1Index)}
+          ${createDropdown(auxiliaryData, `aux2-${index}`, defaultAux2Index)}
+          ${createDropdown(augmentsData, `aug-${index}`, defaultAugIndex)}
         </div>
       </div>
       <div class="ehp-result">
@@ -177,6 +198,7 @@ function createShipRow(ship, index) {
     </div>
   `;
 }
+
 async function initializeCalculator() {
   const container = document.getElementById('ship-calculators');
   const loading = document.getElementById('loading');
@@ -302,7 +324,19 @@ function calculateEHPForConfig(ship, config) {
   const totalEVA = ship.eva + config.aux1.eva + config.aux2.eva + config.augment.eva;
   const totalLCK = ship.lck + config.aux1.lck + config.aux2.lck + config.augment.lck;
   
-  return calculateEHP(totalHP, totalHEAL, totalEVA, totalLCK, ship.lvl);
+  // Average for array values
+  const evaBoost = Array.isArray(ship.evaBoost) && ship.evaBoost.length > 0
+    ? ship.evaBoost.reduce((sum, val) => sum + val, 0) / ship.evaBoost.length 
+    : (ship.evaBoost || 0);
+
+  const dmgRed = Array.isArray(ship.dmgRed) && ship.dmgRed.length > 0
+    ? ship.dmgRed.reduce((sum, val) => sum + val, 0) / ship.dmgRed.length 
+    : (ship.dmgRed || 0);
+
+  const evaRate = Array.isArray(ship.evaRate) && ship.evaRate.length > 0
+    ? ship.evaRate.reduce((sum, val) => sum + val, 0) / ship.evaRate.length 
+    : (ship.evaRate || 0);  
+  return calculateEHP(totalHP, totalHEAL, totalEVA, totalLCK, ship.lvl, evaBoost, dmgRed, evaRate);
 }
 
 function updatePinnedShipIfExists(shipIndex, newEHP) {

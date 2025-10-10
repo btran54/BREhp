@@ -4,14 +4,19 @@ const Ship = require('../models/Ships.js');
 const Auxiliary = require('../models/Auxiliary.js');
 const Augment = require('../models/Augments.js');
 
-// Helper function to calculate eHP
-function calculateEHP(hp, heal, eva, lck, lvl) {
+function calculateEHP(hp, heal, eva, lck, lvl, evaBoost = 0, dmgRed = 0, evaRate = 0) {
+  const levelFactor = 1 / (1 + 0.02 * (126 - lvl));
+  
+  const dmgRedFactor = 1 / (1 - dmgRed);
+  
+  const effectiveEVA = eva * (1 + evaBoost);
+  
   const numerator = hp * (1 + heal);
-  const denominator = 0.1 + (125 / (125 + eva + 2)) + ((50 - lck + 126 - lvl) / 1000);
-  return numerator / denominator;
+  const denominator = 0.1 + (125 / (215 + effectiveEVA + 2)) + ((50 - lck + 126 - lvl) / 1000) - evaRate;
+  
+  return levelFactor * dmgRedFactor * (numerator / denominator);
 }
 
-// GET all ships with calculated eHP
 router.get('/', async (req, res) => {
   try {
     const { page = 1, limit = 20, shipType, faction, rarity, search } = req.query;
@@ -28,13 +33,11 @@ router.get('/', async (req, res) => {
     
     const count = await Ship.countDocuments(query);
     
-    // Load auxiliary and augment data
     const [auxiliaryData, augmentData] = await Promise.all([
       Auxiliary.find(),
       Augment.find()
     ]);
     
-    // Calculate eHP for each ship with default configs
     const shipsWithEHP = ships.map(ship => {
       const shipObj = ship.toObject();
       
@@ -49,15 +52,28 @@ router.get('/', async (req, res) => {
       const totalEVA = ship.eva + aux1.eva + aux2.eva + aug.eva;
       const totalLCK = ship.lck + aux1.lck + aux2.lck + aug.lck;
       
+      // Calculate average for array values
+      const evaBoost = Array.isArray(ship.evaBoost) && ship.evaBoost.length > 0
+        ? ship.evaBoost.reduce((sum, val) => sum + val, 0) / ship.evaBoost.length 
+        : (ship.evaBoost || 0);
+
+      const dmgRed = Array.isArray(ship.dmgRed) && ship.dmgRed.length > 0
+        ? ship.dmgRed.reduce((sum, val) => sum + val, 0) / ship.dmgRed.length 
+        : (ship.dmgRed || 0);
+
+      const evaRate = Array.isArray(ship.evaRate) && ship.evaRate.length > 0
+        ? ship.evaRate.reduce((sum, val) => sum + val, 0) / ship.evaRate.length 
+        : (ship.evaRate || 0);
+              
       // Calculate eHP
-      const eHP = calculateEHP(totalHP, totalHEAL, totalEVA, totalLCK, ship.lvl);
+      const eHP = calculateEHP(totalHP, totalHEAL, totalEVA, totalLCK, ship.lvl, evaBoost, dmgRed, evaRate);
       
       return {
         ...shipObj,
         eHP: Math.round(eHP)
       };
     });
-    
+
     res.json({
       ships: shipsWithEHP,
       totalPages: Math.ceil(count / limit),

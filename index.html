@@ -854,14 +854,18 @@
             <!-- eHP Calculator Section -->
             <section class="ehp-calculator">
                 <h2 class="calculator-title">eHP Calculator</h2>
-                <div class="formula-display">
-                    eHP = <span class="formula-fraction">
+                <div class="formula-display" style="display: flex; justify-content: center; align-items: center; flex-wrap: wrap; gap: 0.5rem;">
+                    eHP = 
+                    <span class="fraction-small">1<hr>1 + 0.02(126 - LVL)</span>
+                    × 
+                    <span class="fraction-small">1<hr>1 - DmgRed</span>
+                    × 
+                    <span class="formula-fraction">
                         HP × (1 + HEAL)
                         <hr>
-                        0.1 + <span class="fraction-small">125<hr>125 + EVA + 2</span> + <span class="fraction-small">50 - LCK + 126 - LVL<hr>1000</span>
+                        0.1 + <span class="fraction-small">125<hr>215 + EVA(1 + EVABOOST) + 2</span> + <span class="fraction-small">50 - LCK + 126 - LVL<hr>1000</span> - EVARate
                     </span>
-                </div>
-                
+                </div>              
                 <div class="ship-calculator-container">
                     <div id="ship-calculators"></div>
                 </div>
