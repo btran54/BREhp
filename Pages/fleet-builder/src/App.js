@@ -145,8 +145,8 @@ function App() {
                 <FleetSlot
                   key={`main-${index}`}
                   position={`Main ${index + 1}`}
-                  ship={fleet.main[index]}
-                  onRemove={() => handleRemoveShip('main', index + 1)}
+                  ship={fleet[`main${index + 1}`]}
+                  onRemove={() => handleRemoveShip(`main${index + 1}`)}
                   onClick={() => handleSlotClick('main', index)}
                   onDrop={handleDrop}
                   slotId={`main-${index}`}
@@ -163,8 +163,8 @@ function App() {
                 <FleetSlot
                   key={`vanguard-${index}`}
                   position={`Vanguard ${index + 1}`}
-                  ship={fleet.vanguard[index]}
-                  onRemove={() => handleRemoveShip('vanguard', index + 1)}
+                  ship={fleet[`vanguard${index + 1}`]}
+                  onRemove={() => handleRemoveShip(`vanguard${index + 1}`)}
                   onClick={() => handleSlotClick('vanguard', index)}
                   onDrop={handleDrop}
                   slotId={`vanguard-${index}`}
