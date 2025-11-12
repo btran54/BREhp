@@ -88,6 +88,10 @@ function App() {
       main3: null
     });
   };
+
+  const handleSlotClick = (fleetType, index) => {
+    setSelectingSlot(`${fleetType}${index + 1}`);
+  }
   
   const totalEhp = Object.values(fleet).reduce((sum, ship) => {
     return sum + calculateEHP(ship);
@@ -107,7 +111,11 @@ function App() {
           <h1 className="text-5xl font-light text-center">Fleet Builder</h1>
           <p className="text-slate-300 text-center">Build and optimize your Azur Lane fleet</p>
           
-          <p className="absolute top-0 right-0 text-slate-400 italic text-left max-w-[250px] leading-tight" style={{ fontSize: 'clamp(0.5rem, 2vw, 0.95rem)' }}>
+          <p className="hidden md:block absolute top-0 right-0 text-slate-400 italic text-right max-w-[250px] leading-tight" style={{ fontSize: 'clamp(0.7rem, 2vw, 0.95rem)' }}>
+            *These default configurations are the most common<br/>and readily accessible items
+          </p>
+
+          <p className="md:hidden text-slate-400 italic text-center text-xs mt-2 leading-tight">
             *These default configurations are the most common<br/>and readily accessible items
           </p>
         </div>
@@ -118,10 +126,10 @@ function App() {
             <h2 className="text-2xl font-semibold text-slate-200">Your Fleet</h2>
             <div className="flex items-center gap-4">
               <span className="text-blue-400 text-lg font-medium">
-                Total eHP: {calculateTotalEHP()}
+                Total eHP: {totalEhp}
               </span>
               <button
-                onClick={clearFleet}
+                onClick={handleClearFleet}
                 className="px-4 py-2 bg-red-500/20 hover:bg-red-500/30 text-red-300 rounded-lg transition-colors text-sm"
               >
                 Clear Fleet
@@ -138,7 +146,7 @@ function App() {
                   key={`main-${index}`}
                   position={`Main ${index + 1}`}
                   ship={fleet.main[index]}
-                  onRemove={() => removeShip('main', index)}
+                  onRemove={() => handleRemoveShip('main', index + 1)}
                   onClick={() => handleSlotClick('main', index)}
                   onDrop={handleDrop}
                   slotId={`main-${index}`}
@@ -156,7 +164,7 @@ function App() {
                   key={`vanguard-${index}`}
                   position={`Vanguard ${index + 1}`}
                   ship={fleet.vanguard[index]}
-                  onRemove={() => removeShip('vanguard', index)}
+                  onRemove={() => handleRemoveShip('vanguard', index + 1)}
                   onClick={() => handleSlotClick('vanguard', index)}
                   onDrop={handleDrop}
                   slotId={`vanguard-${index}`}
