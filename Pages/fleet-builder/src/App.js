@@ -17,6 +17,10 @@ function App() {
     faction: ''
   });
   
+  // Pagination state
+  const [currentPage, setCurrentPage] = useState(1);
+  const [itemsPerPage] = useState(20);
+  
   const [fleet, setFleet] = useState({
     vanguard1: null,
     vanguard2: null,
@@ -33,8 +37,8 @@ function App() {
       .then(res => res.json())
       .then(data => {
         console.log('Ships loaded:', data.ships.length);
-        setAllShips(data.ships);  // Changed from data to data.ships
-        setFilteredShips(data.ships);  // Changed from data to data.ships
+        setAllShips(data.ships);
+        setFilteredShips(data.ships);
         setLoading(false);
       })
       .catch(err => {
@@ -54,7 +58,21 @@ function App() {
     });
     
     setFilteredShips(filtered);
+    // Reset to page 1 when filters change
+    setCurrentPage(1);
   }, [filters, allShips]);
+
+  // Calculate pagination
+  const totalPages = Math.ceil(filteredShips.length / itemsPerPage);
+  const indexOfLastShip = currentPage * itemsPerPage;
+  const indexOfFirstShip = indexOfLastShip - itemsPerPage;
+  const currentShips = filteredShips.slice(indexOfFirstShip, indexOfLastShip);
+
+  const handlePageChange = (pageNumber) => {
+    setCurrentPage(pageNumber);
+    // Scroll to top of ship list
+    document.getElementById('ship-list')?.scrollIntoView({ behavior: 'smooth', block: 'start' });
+  };
 
   const handleClear = () => {
     setFilters({ search: '', type: '', faction: '' });
@@ -96,6 +114,32 @@ function App() {
   const totalEhp = Object.values(fleet).reduce((sum, ship) => {
     return sum + calculateEHP(ship);
   }, 0);
+
+  // Generate page numbers to display
+  const getPageNumbers = () => {
+    const pages = [];
+    const maxPagesToShow = 5;
+    
+    if (totalPages <= maxPagesToShow) {
+      for (let i = 1; i <= totalPages; i++) {
+        pages.push(i);
+      }
+    } else {
+      let startPage = Math.max(1, currentPage - 2);
+      let endPage = Math.min(totalPages, startPage + maxPagesToShow - 1);
+      
+      if (endPage - startPage < maxPagesToShow - 1) {
+        startPage = Math.max(1, endPage - maxPagesToShow + 1);
+      }
+      
+      for (let i = startPage; i <= endPage; i++) {
+        pages.push(i);
+      }
+    }
+    
+    return pages;
+  };
+
   if (loading) {
     return (
       <div className="min-h-screen flex items-center justify-center">
@@ -175,7 +219,7 @@ function App() {
         </div>
         
         {/* Search/Filter Section */}
-        <div className="bg-white/5 backdrop-blur-lg rounded-lg p-6 border border-white/10">
+        <div id="ship-list" className="bg-white/5 backdrop-blur-lg rounded-lg p-6 border border-white/10">
           <h2 className="text-2xl font-light mb-4">Ship Database</h2>
           <SearchFilter
             filters={filters}
@@ -184,13 +228,18 @@ function App() {
             onFactionChange={(value) => setFilters(prev => ({ ...prev, faction: value }))}
             onClear={handleClear}
           />
-          <p className="text-slate-300 mt-4 mb-4">
-            {filteredShips.length} ship{filteredShips.length !== 1 ? 's' : ''} available
-          </p>
+          
+          {/* Pagination Info */}
+          <div className="flex justify-between items-center mt-4 mb-4">
+            <p className="text-slate-300">
+              Showing {indexOfFirstShip + 1}-{Math.min(indexOfLastShip, filteredShips.length)} of {filteredShips.length} ship{filteredShips.length !== 1 ? 's' : ''}
+              {totalPages > 1 && ` (Page ${currentPage} of ${totalPages})`}
+            </p>
+          </div>
           
           {/* Ship List */}
-          <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-3 mt-4">
-            {filteredShips.map(ship => (
+          <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-3 mt-4 mb-6">
+            {currentShips.map(ship => (
               <div
                 key={ship._id}
                 draggable
@@ -213,8 +262,73 @@ function App() {
               </div>
             ))}
           </div>
+          
+          {/* Empty State */}
+          {currentShips.length === 0 && (
+            <p className="text-center text-slate-400 py-8">No ships match your filters</p>
+          )}
+          
+          {/* Pagination Controls */}
+          {totalPages > 1 && (
+            <div className="flex flex-col sm:flex-row items-center justify-center gap-4 mt-6 pt-6 border-t border-white/10">
+              <div className="flex items-center gap-2">
+                {/* First Page */}
+                <button
+                  onClick={() => handlePageChange(1)}
+                  disabled={currentPage === 1}
+                  className="px-3 py-2 rounded-lg bg-slate-700/50 hover:bg-slate-700 disabled:opacity-30 disabled:cursor-not-allowed text-slate-200 text-sm font-medium transition-all"
+                >
+                  First
+                </button>
+                
+                {/* Previous Page */}
+                <button
+                  onClick={() => handlePageChange(currentPage - 1)}
+                  disabled={currentPage === 1}
+                  className="px-3 py-2 rounded-lg bg-slate-700/50 hover:bg-slate-700 disabled:opacity-30 disabled:cursor-not-allowed text-slate-200 text-sm font-medium transition-all"
+                >
+                  Previous
+                </button>
+                
+                {/* Page Numbers */}
+                <div className="flex items-center gap-1">
+                  {getPageNumbers().map(pageNum => (
+                    <button
+                      key={pageNum}
+                      onClick={() => handlePageChange(pageNum)}
+                      className={`px-3 py-2 rounded-lg text-sm font-medium transition-all ${
+                        currentPage === pageNum
+                          ? 'bg-blue-500 text-white'
+                          : 'bg-slate-700/50 hover:bg-slate-700 text-slate-200'
+                      }`}
+                    >
+                      {pageNum}
+                    </button>
+                  ))}
+                </div>
+                
+                {/* Next Page */}
+                <button
+                  onClick={() => handlePageChange(currentPage + 1)}
+                  disabled={currentPage === totalPages}
+                  className="px-3 py-2 rounded-lg bg-slate-700/50 hover:bg-slate-700 disabled:opacity-30 disabled:cursor-not-allowed text-slate-200 text-sm font-medium transition-all"
+                >
+                  Next
+                </button>
+                
+                {/* Last Page */}
+                <button
+                  onClick={() => handlePageChange(totalPages)}
+                  disabled={currentPage === totalPages}
+                  className="px-3 py-2 rounded-lg bg-slate-700/50 hover:bg-slate-700 disabled:opacity-30 disabled:cursor-not-allowed text-slate-200 text-sm font-medium transition-all"
+                >
+                  Last
+                </button>
+              </div>
+            </div>
+          )}
         </div>
-        </div>
+      </div>
 
       {/* Ship Selector Modal */}
       {selectingSlot && (
@@ -224,7 +338,7 @@ function App() {
           onClose={() => setSelectingSlot(null)}
         />
       )}
-      </div>
+    </div>
   );
 }
 
