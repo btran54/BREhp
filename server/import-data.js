@@ -14,7 +14,7 @@ async function importData() {
 
     const auxiliaryDataRaw = JSON.parse(fs.readFileSync(path.join(__dirname, '../Data-Files/Auxiliary.json'), 'utf8'));
     const augmentsDataRaw = JSON.parse(fs.readFileSync(path.join(__dirname, '../Data-Files/Augments.json'), 'utf8'));
-    const shipsDataRaw = JSON.parse(fs.readFileSync(path.join(__dirname, '../Data-Files/Ships.json'), 'utf8'));
+    const shipsDataRaw = JSON.parse(fs.readFileSync(path.join(__dirname, '../Data-Files/dump.json'), 'utf8'));
 
     const auxiliaryData = Object.values(auxiliaryDataRaw);
     const augmentsData = Object.values(augmentsDataRaw);
