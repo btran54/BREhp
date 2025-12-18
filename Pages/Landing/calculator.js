@@ -4,6 +4,7 @@ let augmentsData = [];
 let pinnedShips = [];
 let currentShipsPage = 1;
 let totalShips = 0;
+let totalPages = 1;
 let isLoading = false;
 
 const API_BASE_URL = 'https://brehp.onrender.com/api';
@@ -40,7 +41,7 @@ async function loadDataFromAPI() {
     augmentsData.unshift({ name: "None", hp: 0, eva: 0, lck: 0 });
     
     console.log('Loading ships...');
-    await loadShipsData({ limit: 20 });
+    await loadShipsData({ page: 1, limit: 20 });
     
     console.log('Data loaded successfully from MongoDB!');
     showLoading(false);
@@ -79,7 +80,10 @@ async function loadShipsData(options = {}) {
     }
     
     totalShips = response.total;
+    totalPages = response.totalPages;
     currentShipsPage = page;
+    
+    updatePaginationControls();
     
     return response;
   } catch (error) {
@@ -203,12 +207,19 @@ function createShipRow(ship, index) {
   const defaultAux2Index = auxiliaryData.findIndex(aux => aux.name === ship.defaultEq2) || 2;
   const defaultAugIndex = augmentsData.findIndex(aug => aug.name === ship.defaultAug) || 1;
   
+  // Get ship type and faction with fallbacks
+  const shipType = ship.shipType || ship.TYP || 'Unknown';
+  const faction = ship.faction || ship.Nationality || 'Unknown';
+  
   return `
     <div class="ship-row">
       <div class="ship-controls">
         <div class="ship-info">
           <span class="pin-star" id="star-${index}" onclick="togglePin(${index})" title="Pin this ship">☆</span>
-          <div class="ship-name" data-name-length="${ship.name.length}">${ship.name}</div>
+          <div class="ship-details">
+            <div class="ship-name" data-name-length="${ship.name.length}">${ship.name}</div>
+            <div class="ship-meta">${shipType} • ${faction}</div>
+          </div>
         </div>
         <div class="dropdown-group">
           ${createDropdown(auxiliaryData, `aux1-${index}`, defaultAux1Index)}
@@ -274,6 +285,92 @@ function renderShipRows(append = false) {
   });
 }
 
+function updatePaginationControls() {
+  const paginationContainer = document.getElementById('pagination-controls');
+  if (!paginationContainer) return;
+  
+  const startShip = ((currentShipsPage - 1) * 20) + 1;
+  const endShip = Math.min(currentShipsPage * 20, totalShips);
+  
+  let html = `
+    <div class="pagination-info">
+      Showing ${startShip}-${endShip} of ${totalShips} ships (Page ${currentShipsPage} of ${totalPages})
+    </div>
+    <div class="pagination-buttons">
+      <button onclick="goToFirstPage()" ${currentShipsPage === 1 ? 'disabled' : ''} class="pagination-btn">
+        « First
+      </button>
+      <button onclick="goToPreviousPage()" ${currentShipsPage === 1 ? 'disabled' : ''} class="pagination-btn">
+        ‹ Previous
+      </button>
+      <span class="page-numbers">`;
+  
+  // Show page numbers
+  const maxButtons = 5;
+  let startPage = Math.max(1, currentShipsPage - Math.floor(maxButtons / 2));
+  let endPage = Math.min(totalPages, startPage + maxButtons - 1);
+  
+  if (endPage - startPage < maxButtons - 1) {
+    startPage = Math.max(1, endPage - maxButtons + 1);
+  }
+  
+  for (let i = startPage; i <= endPage; i++) {
+    html += `
+      <button onclick="goToPage(${i})" ${i === currentShipsPage ? 'class="pagination-btn active"' : 'class="pagination-btn"'}>
+        ${i}
+      </button>
+    `;
+  }
+  
+  html += `</span>
+      <button onclick="goToNextPage()" ${currentShipsPage === totalPages ? 'disabled' : ''} class="pagination-btn">
+        Next ›
+      </button>
+      <button onclick="goToLastPage()" ${currentShipsPage === totalPages ? 'disabled' : ''} class="pagination-btn">
+        Last »
+      </button>
+    </div>
+  `;
+  
+  paginationContainer.innerHTML = html;
+}
+
+async function goToPage(page) {
+  if (isLoading || page < 1 || page > totalPages) return;
+  
+  isLoading = true;
+  showLoading(true, `Loading page ${page}...`);
+  
+  try {
+    await loadShipsData({ page, limit: 20 });
+    renderShipRows();
+    
+    // Scroll to top of calculator
+    document.getElementById('ship-calculators').scrollIntoView({ behavior: 'smooth', block: 'start' });
+  } catch (error) {
+    console.error('Error loading page:', error);
+  } finally {
+    isLoading = false;
+    showLoading(false);
+  }
+}
+
+async function goToFirstPage() {
+  await goToPage(1);
+}
+
+async function goToLastPage() {
+  await goToPage(totalPages);
+}
+
+async function goToNextPage() {
+  await goToPage(currentShipsPage + 1);
+}
+
+async function goToPreviousPage() {
+  await goToPage(currentShipsPage - 1);
+}
+
 function showLoading(show, message = 'Loading ship data...') {
   const loading = document.getElementById('loading');
   if (loading) {
@@ -323,6 +420,8 @@ function togglePin(shipIndex) {
     pinnedShips.push({
       shipIndex: shipIndex,
       shipName: ship.name,
+      shipType: ship.shipType || ship.TYP || 'Unknown',
+      faction: ship.faction || ship.Nationality || 'Unknown',
       config: currentConfig,
       eHP: ehp,
       timestamp: Date.now()
@@ -388,7 +487,10 @@ function updatePinnedDisplay() {
     html += `
       <div class="pinned-ship">
         <div class="pinned-ship-header">
-          <div class="pinned-ship-name">${pinned.shipName}</div>
+          <div>
+            <div class="pinned-ship-name">${pinned.shipName}</div>
+            <div class="pinned-ship-meta">${pinned.shipType} • ${pinned.faction}</div>
+          </div>
           <button class="unpin-btn" onclick="unpinShipConfig('${configId}')" title="Unpin ship">★</button>
         </div>
         <div class="pinned-ship-config">
@@ -455,7 +557,13 @@ function closePinnedSidebar() {
   }
 }
 
+// Make functions globally accessible
 window.togglePin = togglePin;
 window.unpinShipConfig = unpinShipConfig;
 window.togglePinnedSidebar = togglePinnedSidebar;
 window.closePinnedSidebar = closePinnedSidebar;
+window.goToPage = goToPage;
+window.goToFirstPage = goToFirstPage;
+window.goToLastPage = goToLastPage;
+window.goToNextPage = goToNextPage;
+window.goToPreviousPage = goToPreviousPage;
