@@ -33,7 +33,8 @@ function App() {
   const [selectingSlot, setSelectingSlot] = useState(null);
 
   useEffect(() => {
-    fetch(`${API_BASE_URL}/ships`)
+    // Fetch all ships at once (no pagination on API side)
+    fetch(`${API_BASE_URL}/ships?limit=1000`)
       .then(res => res.json())
       .then(data => {
         console.log('Ships loaded:', data.ships.length);
