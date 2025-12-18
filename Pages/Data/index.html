@@ -34,7 +34,8 @@
             padding: 1.5rem 2rem;
             background: rgba(0, 0, 0, 0.1);
             backdrop-filter: blur(10px);
-            position: relative;
+            position: sticky;
+            top: 0;
             z-index: 100;
         }
 
@@ -87,30 +88,181 @@
 
         .main-content {
             flex: 1;
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            justify-content: center;
             padding: 3rem 2rem;
-            max-width: 1200px;
+            max-width: 1400px;
             margin: 0 auto;
             width: 100%;
         }
 
         .page-title {
-            font-size: 4rem;
+            font-size: 3rem;
             font-weight: 300;
-            margin-bottom: 2rem;
+            margin-bottom: 1rem;
             text-align: center;
             text-shadow: 0 4px 8px rgba(0, 0, 0, 0.3);
-            animation: fadeInUp 0.8s ease-out;
         }
 
-        .placeholder-text {
-            font-size: 1.4rem;
-            opacity: 0.8;
+        .subtitle {
             text-align: center;
-            animation: fadeInUp 1s ease-out 0.2s both;
+            font-size: 1.1rem;
+            opacity: 0.8;
+            margin-bottom: 2rem;
+        }
+
+        /* Tabs */
+        .tabs {
+            display: flex;
+            gap: 1rem;
+            margin-bottom: 2rem;
+            flex-wrap: wrap;
+            justify-content: center;
+        }
+
+        .tab-button {
+            padding: 1rem 2rem;
+            background: rgba(255, 255, 255, 0.1);
+            border: 2px solid rgba(255, 255, 255, 0.2);
+            border-radius: 10px;
+            color: white;
+            font-size: 1.1rem;
+            cursor: pointer;
+            transition: all 0.3s;
+            backdrop-filter: blur(10px);
+        }
+
+        .tab-button:hover {
+            background: rgba(255, 255, 255, 0.15);
+            border-color: rgba(255, 255, 255, 0.4);
+        }
+
+        .tab-button.active {
+            background: rgba(96, 165, 250, 0.3);
+            border-color: #60a5fa;
+            box-shadow: 0 0 20px rgba(96, 165, 250, 0.4);
+        }
+
+        /* Search Bar */
+        .search-container {
+            margin-bottom: 2rem;
+            text-align: center;
+        }
+
+        .search-input {
+            width: 100%;
+            max-width: 600px;
+            padding: 1rem 1.5rem;
+            font-size: 1rem;
+            background: rgba(255, 255, 255, 0.1);
+            border: 2px solid rgba(255, 255, 255, 0.2);
+            border-radius: 10px;
+            color: white;
+            backdrop-filter: blur(10px);
+            transition: all 0.3s;
+        }
+
+        .search-input::placeholder {
+            color: rgba(255, 255, 255, 0.5);
+        }
+
+        .search-input:focus {
+            outline: none;
+            border-color: #60a5fa;
+            box-shadow: 0 0 20px rgba(96, 165, 250, 0.4);
+        }
+
+        /* Content Panels */
+        .tab-content {
+            display: none;
+        }
+
+        .tab-content.active {
+            display: block;
+            animation: fadeIn 0.5s;
+        }
+
+        @keyframes fadeIn {
+            from {
+                opacity: 0;
+                transform: translateY(20px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        /* Card Grid for data display */
+        .data-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(350px, 1fr));
+            gap: 1.5rem;
+        }
+
+        .data-card {
+            background: rgba(255, 255, 255, 0.1);
+            border: 2px solid rgba(255, 255, 255, 0.2);
+            border-radius: 12px;
+            padding: 1.5rem;
+            backdrop-filter: blur(10px);
+            transition: all 0.3s;
+        }
+
+        .data-card:hover {
+            border-color: rgba(96, 165, 250, 0.6);
+            box-shadow: 0 8px 32px rgba(96, 165, 250, 0.2);
+            transform: translateY(-5px);
+        }
+
+        .card-title {
+            font-size: 1.5rem;
+            font-weight: 600;
+            margin-bottom: 0.5rem;
+            color: #60a5fa;
+        }
+
+        .card-subtitle {
+            font-size: 0.9rem;
+            opacity: 0.7;
+            margin-bottom: 1rem;
+        }
+
+        .card-stats {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 0.75rem;
+        }
+
+        .stat-item {
+            display: flex;
+            justify-content: space-between;
+            padding: 0.5rem;
+            background: rgba(0, 0, 0, 0.2);
+            border-radius: 6px;
+        }
+
+        .stat-label {
+            font-weight: 500;
+            opacity: 0.8;
+        }
+
+        .stat-value {
+            font-weight: 600;
+            color: #93c5fd;
+        }
+
+        .equipment-item {
+            margin-top: 0.5rem;
+            padding: 0.5rem;
+            background: rgba(0, 0, 0, 0.2);
+            border-radius: 6px;
+            font-size: 0.9rem;
+        }
+
+        .no-results {
+            text-align: center;
+            padding: 3rem;
+            font-size: 1.2rem;
+            opacity: 0.6;
         }
 
         .footer {
@@ -133,58 +285,6 @@
             font-size: 0.9rem;
             opacity: 0.9;
             font-weight: 300;
-        }
-
-        .particles {
-            position: fixed;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            pointer-events: none;
-            z-index: 1;
-        }
-
-        .particle {
-            position: absolute;
-            width: 4px;
-            height: 4px;
-            background: rgba(255, 255, 255, 0.1);
-            border-radius: 50%;
-            animation: float 6s infinite linear;
-        }
-
-        @keyframes float {
-            0% {
-                transform: translateY(100vh) scale(0);
-                opacity: 0;
-            }
-            10% {
-                opacity: 1;
-            }
-            90% {
-                opacity: 1;
-            }
-            100% {
-                transform: translateY(-100px) scale(1);
-                opacity: 0;
-            }
-        }
-
-        .data-container > * {
-            position: relative;
-            z-index: 10;
-        }
-
-        @keyframes fadeInUp {
-            from {
-                opacity: 0;
-                transform: translateY(30px);
-            }
-            to {
-                opacity: 1;
-                transform: translateY(0);
-            }
         }
 
         .sidebar {
@@ -248,28 +348,24 @@
 
         @media (max-width: 768px) {
             .page-title {
-                font-size: 2.5rem;
+                font-size: 2rem;
             }
 
-            .placeholder-text {
-                font-size: 1.1rem;
+            .data-grid {
+                grid-template-columns: 1fr;
+            }
+
+            .tabs {
+                flex-direction: column;
+            }
+
+            .tab-button {
+                width: 100%;
             }
         }
     </style>
 </head>
 <body>
-    <div class="particles">
-        <div class="particle" style="left: 10%; animation-delay: 0s;"></div>
-        <div class="particle" style="left: 20%; animation-delay: 1s;"></div>
-        <div class="particle" style="left: 30%; animation-delay: 2s;"></div>
-        <div class="particle" style="left: 40%; animation-delay: 3s;"></div>
-        <div class="particle" style="left: 50%; animation-delay: 4s;"></div>
-        <div class="particle" style="left: 60%; animation-delay: 5s;"></div>
-        <div class="particle" style="left: 70%; animation-delay: 0.5s;"></div>
-        <div class="particle" style="left: 80%; animation-delay: 1.5s;"></div>
-        <div class="particle" style="left: 90%; animation-delay: 2.5s;"></div>
-    </div>
-
     <div class="data-container">
         <header class="header">
             <div class="nav-section">
@@ -282,13 +378,38 @@
         </header>
 
         <main class="main-content">
-            <h1 class="page-title">Data</h1>
-            <p class="placeholder-text">Coming soon...</p>
+            <h1 class="page-title">Database</h1>
+            <p class="subtitle">Browse ship stats, equipment, and augments</p>
+
+            <div class="tabs">
+                <button class="tab-button active" onclick="switchTab('ships')">Ships</button>
+                <button class="tab-button" onclick="switchTab('augments')">Augments</button>
+                <button class="tab-button" onclick="switchTab('auxiliary')">Auxiliary</button>
+            </div>
+
+            <div class="search-container">
+                <input type="text" id="searchInput" class="search-input" placeholder="Search..." oninput="filterData()">
+            </div>
+
+            <!-- Ships Tab -->
+            <div id="ships-content" class="tab-content active">
+                <div id="ships-grid" class="data-grid"></div>
+            </div>
+
+            <!-- Augments Tab -->
+            <div id="augments-content" class="tab-content">
+                <div id="augments-grid" class="data-grid"></div>
+            </div>
+
+            <!-- Auxiliary Tab -->
+            <div id="auxiliary-content" class="tab-content">
+                <div id="auxiliary-grid" class="data-grid"></div>
+            </div>
         </main>
 
         <footer class="footer">
             <p class="company-info">
-                Blue Road eHP Ltd. Co. Inc. LLC. LLP. PLC. Corp. B.V. GmbH. S.A. AG N.V. Pty Ltd. S.r.l. K.K. S. à r.l. Ltda. Oy Sp. z o.o. A/S SpA SA/NV A.C. EEIG K.S. SNC ScS LLP OÜR d.o.o. JSC PBC CIC s.u. OÜ KL. Rt. K.K.T.
+                Blue Road eHP Ltd. Co. Inc. LLC. LLP. PLC. Corp. B.V. GmbH. S.A. AG N.V. Pty Ltd. S.r.l. K.K. S.à r.l. Ltda. Oy Sp. z o.o. A/S SpA SA/NV A.C. EEIG K.S. SNC ScS LLP OÜR d.o.o. JSC PBC CIC s.u. OÜ KL. Rt. K.K.T.
             </p>
             <p class="tagline">Providing reliable Azur Lane data since 2024</p>
         </footer>
@@ -303,6 +424,205 @@
         <a href="./index.html" class="active">Data</a>
     </div>
 
-    <script src="../../js/main.js"></script>
+    <script>
+        // Data storage
+        let shipsData = [];
+        let augmentsData = {};
+        let auxiliaryData = {};
+        let currentTab = 'ships';
+
+        // Load data
+        async function loadData() {
+            try {
+                // Load Ships data
+                const shipsResponse = await fetch('../../Data-Files/Ships.json');
+                const shipsJson = await shipsResponse.json();
+                shipsData = shipsJson.Ships;
+
+                // Load Augments data
+                const augmentsResponse = await fetch('../../Data-Files/Augments.json');
+                augmentsData = await augmentsResponse.json();
+
+                // Load Auxiliary data
+                const auxiliaryResponse = await fetch('../../Data-Files/Auxiliary.json');
+                auxiliaryData = await auxiliaryResponse.json();
+
+                // Display initial data
+                displayShips(shipsData);
+                displayAugments(augmentsData);
+                displayAuxiliary(auxiliaryData);
+            } catch (error) {
+                console.error('Error loading data:', error);
+            }
+        }
+
+        // Display Ships
+        function displayShips(ships) {
+            const grid = document.getElementById('ships-grid');
+            if (ships.length === 0) {
+                grid.innerHTML = '<div class="no-results">No ships found</div>';
+                return;
+            }
+
+            grid.innerHTML = ships.map(ship => `
+                <div class="data-card">
+                    <div class="card-title">${ship.Name}</div>
+                    <div class="card-subtitle">${ship.TYP} • ${ship.Nationality}</div>
+                    <div class="card-stats">
+                        <div class="stat-item">
+                            <span class="stat-label">HP</span>
+                            <span class="stat-value">${ship.HP}</span>
+                        </div>
+                        <div class="stat-item">
+                            <span class="stat-label">EVA</span>
+                            <span class="stat-value">${ship.EVA}</span>
+                        </div>
+                        <div class="stat-item">
+                            <span class="stat-label">LCK</span>
+                            <span class="stat-value">${ship.LCK}</span>
+                        </div>
+                        <div class="stat-item">
+                            <span class="stat-label">Armor</span>
+                            <span class="stat-value">${ship.ARMOR}</span>
+                        </div>
+                    </div>
+                    ${ship.DefaultEq1 ? `<div class="equipment-item">🔧 ${ship.DefaultEq1}</div>` : ''}
+                    ${ship.DefaultEq2 ? `<div class="equipment-item">🔧 ${ship.DefaultEq2}</div>` : ''}
+                    ${ship.DefaultAug ? `<div class="equipment-item">⚡ ${ship.DefaultAug}</div>` : ''}
+                </div>
+            `).join('');
+        }
+
+        // Display Augments
+        function displayAugments(augments) {
+            const grid = document.getElementById('augments-grid');
+            const augmentArray = Object.values(augments);
+            
+            if (augmentArray.length === 0) {
+                grid.innerHTML = '<div class="no-results">No augments found</div>';
+                return;
+            }
+
+            grid.innerHTML = augmentArray.map(aug => `
+                <div class="data-card">
+                    <div class="card-title">${aug.Name}</div>
+                    <div class="card-stats">
+                        <div class="stat-item">
+                            <span class="stat-label">HP</span>
+                            <span class="stat-value">${aug.HP}</span>
+                        </div>
+                        <div class="stat-item">
+                            <span class="stat-label">HP Boost</span>
+                            <span class="stat-value">${(aug.HPBoost * 100).toFixed(1)}%</span>
+                        </div>
+                        <div class="stat-item">
+                            <span class="stat-label">EVA</span>
+                            <span class="stat-value">${aug.EVA}</span>
+                        </div>
+                        <div class="stat-item">
+                            <span class="stat-label">LCK</span>
+                            <span class="stat-value">${aug.LCK}</span>
+                        </div>
+                    </div>
+                </div>
+            `).join('');
+        }
+
+        // Display Auxiliary
+        function displayAuxiliary(auxiliary) {
+            const grid = document.getElementById('auxiliary-grid');
+            const auxArray = Object.values(auxiliary);
+            
+            if (auxArray.length === 0) {
+                grid.innerHTML = '<div class="no-results">No auxiliary equipment found</div>';
+                return;
+            }
+
+            grid.innerHTML = auxArray.map(aux => `
+                <div class="data-card">
+                    <div class="card-title">${aux.Name}</div>
+                    <div class="card-stats">
+                        <div class="stat-item">
+                            <span class="stat-label">HP</span>
+                            <span class="stat-value">${aux.HP}</span>
+                        </div>
+                        <div class="stat-item">
+                            <span class="stat-label">HP Boost</span>
+                            <span class="stat-value">${(aux.HPBoost * 100).toFixed(1)}%</span>
+                        </div>
+                        <div class="stat-item">
+                            <span class="stat-label">EVA</span>
+                            <span class="stat-value">${aux.EVA}</span>
+                        </div>
+                        <div class="stat-item">
+                            <span class="stat-label">LCK</span>
+                            <span class="stat-value">${aux.LCK}</span>
+                        </div>
+                    </div>
+                </div>
+            `).join('');
+        }
+
+        // Switch tabs
+        function switchTab(tab) {
+            currentTab = tab;
+            
+            // Update tab buttons
+            document.querySelectorAll('.tab-button').forEach(btn => btn.classList.remove('active'));
+            event.target.classList.add('active');
+            
+            // Update content
+            document.querySelectorAll('.tab-content').forEach(content => content.classList.remove('active'));
+            document.getElementById(`${tab}-content`).classList.add('active');
+            
+            // Clear search
+            document.getElementById('searchInput').value = '';
+            filterData();
+        }
+
+        // Filter data based on search
+        function filterData() {
+            const searchTerm = document.getElementById('searchInput').value.toLowerCase();
+            
+            if (currentTab === 'ships') {
+                const filtered = shipsData.filter(ship => 
+                    ship.Name.toLowerCase().includes(searchTerm) ||
+                    ship.Nationality.toLowerCase().includes(searchTerm) ||
+                    ship.TYP.toLowerCase().includes(searchTerm)
+                );
+                displayShips(filtered);
+            } else if (currentTab === 'augments') {
+                const filtered = {};
+                Object.keys(augmentsData).forEach(key => {
+                    if (key.toLowerCase().includes(searchTerm) || 
+                        augmentsData[key].Name.toLowerCase().includes(searchTerm)) {
+                        filtered[key] = augmentsData[key];
+                    }
+                });
+                displayAugments(filtered);
+            } else if (currentTab === 'auxiliary') {
+                const filtered = {};
+                Object.keys(auxiliaryData).forEach(key => {
+                    if (key.toLowerCase().includes(searchTerm) || 
+                        auxiliaryData[key].Name.toLowerCase().includes(searchTerm)) {
+                        filtered[key] = auxiliaryData[key];
+                    }
+                });
+                displayAuxiliary(filtered);
+            }
+        }
+
+        // Sidebar functions
+        function openNav() {
+            document.getElementById("mySidebar").style.width = "250px";
+        }
+
+        function closeNav() {
+            document.getElementById("mySidebar").style.width = "0";
+        }
+
+        // Load data on page load
+        window.addEventListener('DOMContentLoaded', loadData);
+    </script>
 </body>
 </html>
