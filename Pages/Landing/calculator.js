@@ -100,6 +100,7 @@ function calculateEHP(hp, heal, eva, lck, lvl, evaBoost = 0, dmgRed = 0, evaRate
   
   return levelFactor * dmgRedFactor * (numerator / denominator);
 }
+
 function createDropdown(items, id, defaultIndex = 0) {
   let options = '';
   items.forEach((item, index) => {
@@ -138,10 +139,37 @@ function updateEHP(shipIndex) {
   const evaRate = Array.isArray(ship.evaRate) && ship.evaRate.length > 0
     ? ship.evaRate.reduce((sum, val) => sum + val, 0) / ship.evaRate.length 
     : (ship.evaRate || 0);
-    const ehp = calculateEHP(totalHP, totalHEAL, totalEVA, totalLCK, ship.lvl, evaBoost, dmgRed, evaRate);
+    
+  const ehp = calculateEHP(totalHP, totalHEAL, totalEVA, totalLCK, ship.lvl, evaBoost, dmgRed, evaRate);
 
   updateBarDisplay(shipIndex, ehp);
-  updatePinnedShipIfExists(shipIndex, ehp);
+  
+  // Update the star to reflect if current config is pinned
+  updateStarForCurrentConfig(shipIndex);
+}
+
+function updateStarForCurrentConfig(shipIndex) {
+  const starElement = document.getElementById(`star-${shipIndex}`);
+  if (!starElement) return;
+  
+  const currentConfig = getCurrentShipConfig(shipIndex);
+  const isPinned = pinnedShips.some(pinned => 
+    pinned.shipIndex === shipIndex && configsMatch(pinned.config, currentConfig)
+  );
+  
+  if (isPinned) {
+    starElement.textContent = '★';
+    starElement.classList.add('pinned');
+  } else {
+    starElement.textContent = '☆';
+    starElement.classList.remove('pinned');
+  }
+}
+
+function configsMatch(config1, config2) {
+  return config1.aux1Index === config2.aux1Index &&
+         config1.aux2Index === config2.aux2Index &&
+         config1.augIndex === config2.augIndex;
 }
 
 function updateBarDisplay(shipIndex, ehp) {
@@ -279,19 +307,23 @@ function togglePin(shipIndex) {
     return;
   }
   
-  const existingIndex = pinnedShips.findIndex(pinned => pinned.shipIndex === shipIndex);
+  const currentConfig = getCurrentShipConfig(shipIndex);
+  const existingIndex = pinnedShips.findIndex(pinned => 
+    pinned.shipIndex === shipIndex && configsMatch(pinned.config, currentConfig)
+  );
   
   if (existingIndex !== -1) {
+    // Unpin this specific config
     pinnedShips.splice(existingIndex, 1);
     starElement.textContent = '☆';
     starElement.classList.remove('pinned');
   } else {
-    const config = getCurrentShipConfig(shipIndex);
-    const ehp = calculateEHPForConfig(ship, config);
+    // Pin the current config
+    const ehp = calculateEHPForConfig(ship, currentConfig);
     pinnedShips.push({
       shipIndex: shipIndex,
       shipName: ship.name,
-      config: config,
+      config: currentConfig,
       eHP: ehp,
       timestamp: Date.now()
     });
@@ -339,16 +371,6 @@ function calculateEHPForConfig(ship, config) {
   return calculateEHP(totalHP, totalHEAL, totalEVA, totalLCK, ship.lvl, evaBoost, dmgRed, evaRate);
 }
 
-function updatePinnedShipIfExists(shipIndex, newEHP) {
-  const pinnedIndex = pinnedShips.findIndex(pinned => pinned.shipIndex === shipIndex);
-  if (pinnedIndex !== -1) {
-    const config = getCurrentShipConfig(shipIndex);
-    pinnedShips[pinnedIndex].config = config;
-    pinnedShips[pinnedIndex].eHP = newEHP;
-    updatePinnedDisplay();
-  }
-}
-
 function updatePinnedDisplay() {
   const container = document.getElementById('pinnedShipsContainer');
   
@@ -362,11 +384,12 @@ function updatePinnedDisplay() {
   let html = '';
   sortedPinned.forEach((pinned, index) => {
     const percentage = ((pinned.eHP / 12000) * 100).toFixed(1);
+    const configId = `${pinned.shipIndex}-${pinned.config.aux1Index}-${pinned.config.aux2Index}-${pinned.config.augIndex}`;
     html += `
       <div class="pinned-ship">
         <div class="pinned-ship-header">
           <div class="pinned-ship-name">${pinned.shipName}</div>
-          <button class="unpin-btn" onclick="unpinShip(${pinned.shipIndex})" title="Unpin ship">★</button>
+          <button class="unpin-btn" onclick="unpinShipConfig('${configId}')" title="Unpin ship">★</button>
         </div>
         <div class="pinned-ship-config">
           <strong>Equipment:</strong><br>
@@ -384,16 +407,22 @@ function updatePinnedDisplay() {
   container.innerHTML = html;
 }
 
-function unpinShip(shipIndex) {
-  const starElement = document.getElementById(`star-${shipIndex}`);
-  const existingIndex = pinnedShips.findIndex(pinned => pinned.shipIndex === shipIndex);
+function unpinShipConfig(configId) {
+  const [shipIndex, aux1Index, aux2Index, augIndex] = configId.split('-').map(Number);
+  
+  const existingIndex = pinnedShips.findIndex(pinned => 
+    pinned.shipIndex === shipIndex &&
+    pinned.config.aux1Index === aux1Index &&
+    pinned.config.aux2Index === aux2Index &&
+    pinned.config.augIndex === augIndex
+  );
   
   if (existingIndex !== -1) {
     pinnedShips.splice(existingIndex, 1);
-    if (starElement) {
-      starElement.textContent = '☆';
-      starElement.classList.remove('pinned');
-    }
+    
+    // Update the star if it matches the current config
+    updateStarForCurrentConfig(shipIndex);
+    
     updatePinnedDisplay();
     updatePinToggleButton();
   }
@@ -404,7 +433,7 @@ function updatePinToggleButton() {
   if (button) {
     if (pinnedShips.length > 0) {
       button.classList.add('has-pinned');
-      button.title = `View ${pinnedShips.length} Pinned Ship${pinnedShips.length !== 1 ? 's' : ''}`;
+      button.title = `View ${pinnedShips.length} Pinned Configuration${pinnedShips.length !== 1 ? 's' : ''}`;
     } else {
       button.classList.remove('has-pinned');
       button.title = 'View Pinned Ships';
@@ -427,6 +456,6 @@ function closePinnedSidebar() {
 }
 
 window.togglePin = togglePin;
-window.unpinShip = unpinShip;
+window.unpinShipConfig = unpinShipConfig;
 window.togglePinnedSidebar = togglePinnedSidebar;
 window.closePinnedSidebar = closePinnedSidebar;
