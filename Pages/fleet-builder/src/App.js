@@ -149,7 +149,7 @@ function App() {
                   onRemove={() => handleRemoveShip(`main${index + 1}`)}
                   onClick={() => handleSlotClick('main', index)}
                   onDrop={handleDrop}
-                  slotId={`main-${index}`}
+                  slotId={`main-${index + 1}`}
                 />
               ))}
             </div>
@@ -167,7 +167,7 @@ function App() {
                   onRemove={() => handleRemoveShip(`vanguard${index + 1}`)}
                   onClick={() => handleSlotClick('vanguard', index)}
                   onDrop={handleDrop}
-                  slotId={`vanguard-${index}`}
+                  slotId={`vanguard-${index + 1}`}
                 />
               ))}
             </div>
