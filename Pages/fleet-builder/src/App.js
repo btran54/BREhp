@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 import SearchFilter from './components/SearchFilter';
 import FleetSlot from './components/FleetSlot';
 import ShipSelector from './components/ShipSelector';
@@ -31,6 +31,64 @@ function App() {
   });
   
   const [selectingSlot, setSelectingSlot] = useState(null);
+
+  // Auto-scroll state for drag and drop
+  const [isDragging, setIsDragging] = useState(false);
+  const scrollIntervalRef = useRef(null);
+
+  // Auto-scroll when dragging near edges
+  useEffect(() => {
+    const handleDragOver = (e) => {
+      if (!isDragging) return;
+
+      const scrollZone = 100; // pixels from edge to trigger scroll
+      const scrollSpeed = 10; // pixels to scroll per interval
+      const viewportHeight = window.innerHeight;
+      const mouseY = e.clientY;
+
+      // Clear existing interval
+      if (scrollIntervalRef.current) {
+        clearInterval(scrollIntervalRef.current);
+        scrollIntervalRef.current = null;
+      }
+
+      // Scroll up if near top
+      if (mouseY < scrollZone) {
+        scrollIntervalRef.current = setInterval(() => {
+          window.scrollBy(0, -scrollSpeed);
+        }, 16); // ~60fps
+      }
+      // Scroll down if near bottom
+      else if (mouseY > viewportHeight - scrollZone) {
+        scrollIntervalRef.current = setInterval(() => {
+          window.scrollBy(0, scrollSpeed);
+        }, 16);
+      }
+    };
+
+    const handleDragEnd = () => {
+      setIsDragging(false);
+      if (scrollIntervalRef.current) {
+        clearInterval(scrollIntervalRef.current);
+        scrollIntervalRef.current = null;
+      }
+    };
+
+    if (isDragging) {
+      window.addEventListener('dragover', handleDragOver);
+      window.addEventListener('dragend', handleDragEnd);
+      window.addEventListener('drop', handleDragEnd);
+    }
+
+    return () => {
+      window.removeEventListener('dragover', handleDragOver);
+      window.removeEventListener('dragend', handleDragEnd);
+      window.removeEventListener('drop', handleDragEnd);
+      if (scrollIntervalRef.current) {
+        clearInterval(scrollIntervalRef.current);
+      }
+    };
+  }, [isDragging]);
 
   useEffect(() => {
     // Fetch all ships at once (no pagination on API side)
@@ -247,7 +305,9 @@ function App() {
                 onDragStart={(e) => {
                   e.dataTransfer.setData('shipId', ship._id);
                   e.dataTransfer.effectAllowed = 'copy';
+                  setIsDragging(true);
                 }}
+                onDragEnd={() => setIsDragging(false)}
                 className="bg-slate-700/30 border border-slate-600/30 rounded-lg p-3 hover:bg-slate-700/50 hover:border-blue-500/50 transition-all cursor-grab active:cursor-grabbing"
               >
                 <p className="text-slate-200 font-semibold text-sm">{ship.name}</p>
