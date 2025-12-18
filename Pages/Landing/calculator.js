@@ -212,16 +212,16 @@ function createShipRow(ship, index) {
   const faction = ship.faction || ship.Nationality || 'Unknown';
   
   return `
-    <div class="ship-row">
-      <div class="ship-controls">
-        <div class="ship-info">
-          <span class="pin-star" id="star-${index}" onclick="togglePin(${index})" title="Pin this ship">☆</span>
-          <div class="ship-details">
-            <div class="ship-name" data-name-length="${ship.name.length}">${ship.name}</div>
-            <div class="ship-meta">${shipType} • ${faction}</div>
-          </div>
-        </div>
-        <div class="dropdown-group">
+      <div class="ship-row">
+        <div class="ship-controls">
+          <div class="ship-info">
+            <span class="pin-star" id="star-${index}" onclick="togglePin(${index})" title="Pin this ship">☆</span>
+            <div class="ship-details">
+              <div class="ship-name" data-name-length="${ship.name.length}">${ship.name}</div>
+              <div class="ship-meta">${ship.shipType || ship.TYP || 'Unknown'} • ${ship.faction || ship.Nationality || 'Unknown'}</div>
+            </div>
+          </div>        
+          <div class="dropdown-group">
           ${createDropdown(auxiliaryData, `aux1-${index}`, defaultAux1Index)}
           ${createDropdown(auxiliaryData, `aux2-${index}`, defaultAux2Index)}
           ${createDropdown(augmentsData, `aug-${index}`, defaultAugIndex)}
